@@ -14,7 +14,7 @@ class Actions extends Component {
   render () {
     return (
       <div>
-        <FloatingActionButton style={styles.fab}>
+        <FloatingActionButton style={styles.fab} secondary>
           <ContentAdd />
         </FloatingActionButton>
       </div>
