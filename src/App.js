@@ -1,21 +1,39 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+// Material-UI
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+// Views
+import Home from './views/Home'
+import Actions from './views/Actions'
+import NotFound from './views/NotFound'
+
+import SideNav from './components/SideNav'
+
+import injectTapEventPlugin from 'react-tap-event-plugin'
+
+import './App.css'
+
+injectTapEventPlugin()
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <BrowserRouter>
+        <MuiThemeProvider muiTheme={getMuiTheme()}>
+          <div>
+            <SideNav />
+
+            <Switch>
+              <Route exact path='/' component={Home} />
+              <Route exact path='/actions' component={Actions} />
+              <Route component={NotFound} />
+            </Switch>
+          </div>
+        </MuiThemeProvider>
+      </BrowserRouter>
     );
   }
 }
 
-export default App;
+export default App
