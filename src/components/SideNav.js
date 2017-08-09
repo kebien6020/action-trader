@@ -17,10 +17,7 @@ const links = [
 ]
 
 class SideNav extends Component {
-  constructor (props) {
-    super(props)
-    this.state = { open: false }
-  }
+  state = { open: false }
 
   handleClose = () => this.setState({ open: false })
 
@@ -34,6 +31,7 @@ class SideNav extends Component {
             this.setState({ open: !this.state.open })}
         />
         <Drawer
+          className='drawer'
           open={this.state.open}
           docked={false}
           onRequestChange={open => this.setState({ open })}
