@@ -6,11 +6,19 @@
     "react-scripts": "1.0.10"
   },
   "dependencies": {
+    "asyncawait": "^1.0.6",
+    "body-parser": "^1.17.2",
+    "nodemon": "^1.11.0",
+    "npm-run-all": "^4.0.2",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "sequelize": "^4.4.2",
+    "sqlite3": "^3.1.9"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start-js": "react-scripts start",
+    "start-server": "nodemon server -w server",
+    "start": "npm-run-all -p start-js start-server",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
