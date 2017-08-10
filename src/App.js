@@ -7,10 +7,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import Home from './views/Home'
 import Actions from './views/Actions'
 import NotFound from './views/NotFound'
-
+// Other
 import SideNav from './components/SideNav'
-
 import injectTapEventPlugin from 'react-tap-event-plugin'
+import theme from './theme'
 
 import './App.css'
 
@@ -20,7 +20,7 @@ class App extends Component {
   render() {
     return (
       <BrowserRouter>
-        <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
           <div>
             <SideNav />
 
