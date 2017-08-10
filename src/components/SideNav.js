@@ -29,6 +29,7 @@ class SideNav extends Component {
           iconClassNameRight='muidocs-icon-navigation-expand-more'
           onLeftIconButtonTouchTap={() =>
             this.setState({ open: !this.state.open })}
+          className='appbar'
         />
         <Drawer
           className='drawer'

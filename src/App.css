@@ -10,3 +10,11 @@ a {
 .drawer a.active > div {
   background-color: #f5f5f5;
 }
+
+.appbar {
+  position: fixed !important; /* Override material-ui style */
+}
+
+.appbar~* {
+  padding-top: 64px;
+}
