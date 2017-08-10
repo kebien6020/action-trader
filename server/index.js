@@ -4,6 +4,7 @@ const path = require('path')
 const { Action, Sequelize } = require('../db/models')
 const { async, await } = require('asyncawait')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 const PORT = 9000
 const BUILD_FOLDER = path.resolve('./build')
@@ -12,6 +13,7 @@ const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(cors())
 
 app.use(express.static(BUILD_FOLDER))
 
