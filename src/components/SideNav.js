@@ -13,7 +13,7 @@ import { List } from 'material-ui/List'
 
 const links = [
   { isExact: true, linkTo: '/', text: 'Home' },
-  { isExact: false, linkTo: '/actions', text: 'Editor de Acciones' }
+  { isExact: false, linkTo: '/actions', text: 'Acciones' }
 ]
 
 class SideNav extends Component {
