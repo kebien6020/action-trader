@@ -16,6 +16,7 @@ const styles = {
     position: 'fixed',
     bottom: '20px',
     right: '20px',
+    zIndex: 900
   },
   dialogContent: {
     width: '100%',
