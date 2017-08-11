@@ -31,6 +31,8 @@ const green = 'green'
 const orange = 'orange'
 
 class Actions extends Component {
+  static isPrivate = true
+
   state = {
     showAddDialog: false,
     actions: [],
@@ -42,7 +44,7 @@ class Actions extends Component {
 
   componentWillMount = async () => {
     try {
-      const response = await fetchJson('/actions')
+      const response = await fetchJson('/actions', this.props.auth)
       if (!response.success)
         throw Error(response.error)
       const rawActions = response.actions
