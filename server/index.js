@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const jwt = require('express-jwt')
 const jwks = require('jwks-rsa')
-const actions = require('./actions')
+const routes = require('./routes')
 
 const PORT = 9000
 const BUILD_FOLDER = path.resolve('./build')
@@ -33,31 +33,10 @@ app.use(cors())
 
 app.use(express.static(BUILD_FOLDER))
 
-app.get('/api/actions', authCheck, actions.list)
+app.use('/api/actions', authCheck, routes.actions)
 
-app.get('/api/actions/:id', actions.detail)
-
-app.put('/api/actions/:id', actions.update)
-
-app.post('/api/actions', actions.create)
-
-app.delete('/api/actions/:id', actions.delete)
-
-// Error handler
+// Error handler for authCheck middleware
 app.use((error, req, res, next) => {
-
-  if (error instanceof Sequelize.ValidationError && error.get('name'))
-    error = {
-      message: 'The name of the action must be unique',
-      name: 'ValidationError',
-      code: 'name_unique',
-    }
-  else if (error.message === 'not found')
-    error = {
-      message: 'Action not found',
-      name: 'NotFoundError',
-      code: 'not_found'
-    }
   res.json({ success: false, error })
 })
 
