@@ -10,22 +10,33 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        unique: true,
+        unique: 'name_owner',
+        allowNull: false,
       },
       type: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       check: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       value: {
-        type: Sequelize.DECIMAL(20, 10)
+        type: Sequelize.DECIMAL(20, 10),
+        allowNull: false
       },
-      triggerId: {
-        type: Sequelize.INTEGER
+      triggerName: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       enabled: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false
+      },
+      owner: {
+        type: Sequelize.STRING,
+        unique: 'name_owner',
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
