@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const jwt = require('express-jwt')
 const jwks = require('jwks-rsa')
+const actions = require('./actions')
 
 const PORT = 9000
 const BUILD_FOLDER = path.resolve('./build')
@@ -41,76 +42,15 @@ const fields = [
   'enabled'
 ]
 
-app.get('/api/actions', authCheck, async ((req, res) => {
-  let response = null
-  try {
-    const actions = await (Action.findAll())
-    response = {success: true, actions}
-  } catch (error) {
-    response = {success: false, error}
-  }
-  res.json(response)
-}))
+app.get('/api/actions', authCheck, actions.list)
 
-app.get('/api/actions/:id', async ((req, res) => {
-  const actionId = req.params.id
-  let response = null
-  try {
-    const action = await (Action.findById(actionId))
-    if (action === null)
-      throw Error('not found')
-    response = {success: true, action}
-  } catch (error) {
-    response = {success: false, error}
-  }
-  res.json(response)
-}))
+app.get('/api/actions/:id', actions.detail)
 
-app.put('/api/actions/:id', async ((req, res) => {
-  const actionId = req.params.id
-  let response = null
-  try {
-    const action = await (Action.findById(actionId))
-    await (action.update(req.body, {fields}))
-    response = {success: true, action}
-  } catch (error) {
-    response = {success: false, error}
-  }
-  res.json(response)
-}))
+app.put('/api/actions/:id', actions.update)
 
-app.post('/api/actions', async ((req, res) => {
-  let response = null
-  try {
-    const action = await (Action.create(req.body, {fields}))
-    response = {success: true, action}
-  } catch (error) {
-    if (error instanceof Sequelize.ValidationError && error.get('name'))
-      response = {success: false, error: {
-        message: 'The name of the action must be unique',
-        name: 'ValidatinError',
-        code: 'name_unique',
-      }}
-    else
-      response = {success: false, error}
-  }
-  res.json(response)
-}))
+app.post('/api/actions', actions.create)
 
-app.delete('/api/actions/:id', async ((req, res) => {
-  const actionId = req.params.id
-  let response = null
-  try {
-    const action = await (Action.findById(actionId))
-    if (action === null)
-      throw Error('not found')
-    await (action.destroy())
-    response = {success: true}
-  } catch (error) {
-    response = {success: false, error}
-  }
-  res.json(response)
-}))
+app.delete('/api/actions/:id', actions.delete)
 
 // Error handler
 app.use((error, req, res, next) => {
