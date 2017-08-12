@@ -1,5 +1,6 @@
 const Router = require('express').Router
 const actionHandlers = require('./actions')
+const Sequelize = require('sequelize')
 
 const actions = Router()
 
@@ -15,20 +16,27 @@ actions.delete('/:id', actionHandlers.delete)
 
 // Error handler
 actions.use((error, req, res, next) => {
-
-  if (error instanceof Sequelize.ValidationError && error.get('name'))
+  try {
+    if (error instanceof Sequelize.ValidationError)
     error = {
-      message: 'The name of the action must be unique',
-      name: 'ValidationError',
-      code: 'name_unique',
+      message: JSON.stringify(error.errors),
+      name: error.name
     }
-  else if (error.message === 'not found')
+    else if (error.message === 'not found')
     error = {
       message: 'Action not found',
       name: 'NotFoundError',
       code: 'not_found'
     }
-  res.json({ success: false, error })
+    else
+    error = {
+      message: error.message
+    }
+    res.json({ success: false, error })
+
+  } catch (err) {
+    console.log(err)
+  }
 })
 
 exports.actions = actions

@@ -10,7 +10,6 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        unique: 'name_owner',
         allowNull: false,
       },
       type: {
@@ -35,7 +34,6 @@ module.exports = {
       },
       owner: {
         type: Sequelize.STRING,
-        unique: 'name_owner',
         allowNull: false
       },
       createdAt: {
@@ -45,6 +43,12 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      }
+    }, {
+      uniqueKeys:{
+        'name_owner': {
+          fields: ['name', 'owner']
+        }
       }
     });
   },
