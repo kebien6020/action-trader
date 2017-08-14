@@ -13,7 +13,7 @@ class NewActionDialog extends Component {
     type: 'enable',
     check: 'none',
     value: '',
-    triggerName: null,
+    triggerName: '',
     enabled: false
   }
 

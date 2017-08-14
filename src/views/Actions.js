@@ -6,8 +6,12 @@ import ArrowUp from 'material-ui/svg-icons/navigation/arrow-upward'
 import ArrowDown from 'material-ui/svg-icons/navigation/arrow-downward'
 import Cross from 'material-ui/svg-icons/navigation/close'
 import Check from 'material-ui/svg-icons/navigation/subdirectory-arrow-right'
-import { fetchJson } from '../utils'
 import NewActionDialog from '../components/NewActionDialog'
+import IconMenu from 'material-ui/IconMenu'
+import MenuItem from 'material-ui/MenuItem'
+import IconButton from 'material-ui/IconButton'
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
+import { fetchJson } from '../utils'
 
 
 const styles = {
@@ -136,12 +140,29 @@ class Actions extends Component {
         secondaryText={this.genActionText(action)}
         secondaryTextLines={2}
         leftIcon={this.genIcon(action)}
+        rightIconButton={
+          <IconMenu
+            iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+            anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+            targetOrigin={{horizontal: 'right', vertical: 'top'}}
+            >
+          <MenuItem primaryText="Eliminar" onTouchTap={() => this.deleteAction(action.id)} />
+        </IconMenu>
+      }
       />
     )
   }
 
+  deleteAction = async (id) => {
+    await fetchJson(`/actions/${id}`, this.props.auth, {method: 'delete'})
+    this.getActions()
+  }
+
   handleNewAction = async (action) => {
+    // Work over clone
+    action = Object.assign({}, action)
     if (action.check === 'none') action.check = null
+    if (action.triggerName === '') action.triggerName = null
     await fetchJson('/actions', this.props.auth, {
       method: 'post',
       body: JSON.stringify(action),
