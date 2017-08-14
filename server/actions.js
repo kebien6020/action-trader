@@ -7,15 +7,17 @@ const fields = [
   'check',
   'value',
   'triggerName',
-  'enabled',
-  'owner'
+  'enabled'
 ]
 
 exports.list = async ((req, res, next) => {
   try {
     const owner = req.user.sub
     const actions = await (Action.findAll({
-      where: {owner}
+      where: {owner},
+      attributes: {
+        exclude: ['owner']
+      }
     }))
     res.json({success: true, actions})
   } catch (err) { next(err) }
@@ -48,7 +50,7 @@ exports.update = async ((req, res, next) => {
 exports.create = async ((req, res, next) => {
   try {
     req.body.owner = req.user.sub
-    const action = await (Action.create(req.body, {fields}))
+    const action = await (Action.create(req.body, {fields: fields.concat('owner')}))
     res.json({success: true, action})
   } catch (err) { next(err) }
 })
