@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import PlusIcon from 'material-ui/svg-icons/content/add'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
 import { List, ListItem } from 'material-ui/List'
 import ArrowUp from 'material-ui/svg-icons/navigation/arrow-upward'
 import ArrowDown from 'material-ui/svg-icons/navigation/arrow-downward'
 import Cross from 'material-ui/svg-icons/navigation/close'
 import Check from 'material-ui/svg-icons/navigation/subdirectory-arrow-right'
 import { fetchJson } from '../utils'
+import NewActionDialog from '../components/NewActionDialog'
 
 
 const styles = {
@@ -17,10 +16,6 @@ const styles = {
     bottom: '20px',
     right: '20px',
     zIndex: 900
-  },
-  dialogContent: {
-    width: '100%',
-    maxWidth: 'none',
   },
 }
 
@@ -41,8 +36,7 @@ class Actions extends Component {
     errorMsg: null,
   }
 
-
-  componentWillMount = async () => {
+  getActions = async () => {
     try {
       const response = await fetchJson('/actions', this.props.auth)
       if (!response.success)
@@ -64,6 +58,10 @@ class Actions extends Component {
     }
   }
 
+  componentWillMount = async () => {
+    return this.getActions()
+  }
+
   closeDialogs = () => this.setState({showAddDialog: false})
 
   openAddDialog = () => this.setState({showAddDialog: true})
@@ -77,7 +75,7 @@ class Actions extends Component {
   }
 
   genActionText = action => {
-    const triggers = this.state.actionNames[action.triggerId]
+    const triggers = action.triggerName
 
     switch (action.type) {
     case 'enable':
@@ -142,20 +140,17 @@ class Actions extends Component {
     )
   }
 
+  handleNewAction = async (action) => {
+    if (action.check === 'none') action.check = null
+    await fetchJson('/actions', this.props.auth, {
+      method: 'post',
+      body: JSON.stringify(action),
+    })
+    this.closeDialogs()
+    return this.getActions()
+  }
+
   render () {
-    const addDialogActions = [
-      <FlatButton
-        label='Cancelar'
-        primary={true}
-        onTouchTap={this.closeDialogs}
-      />,
-      <FlatButton
-        label='Crear'
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={this.closeDialogs}
-      />
-    ]
     return (
       <div>
         <FloatingActionButton
@@ -171,15 +166,13 @@ class Actions extends Component {
               {this.state.actions.map(this.renderAction)}
             </List>
         }
-        <Dialog
-          title='Nueva acción'
-          modal={true}
-          actions={addDialogActions}
+        <NewActionDialog
           open={this.state.showAddDialog}
-          contentStyle={styles.dialogContent}
+          onCancel={this.closeDialogs}
+          onCreate={this.handleNewAction}
         >
 
-        </Dialog>
+        </NewActionDialog>
       </div>
     )
   }
