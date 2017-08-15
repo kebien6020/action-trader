@@ -34,6 +34,7 @@ app.use(cors())
 app.use(express.static(BUILD_FOLDER))
 
 app.use('/api/actions', authCheck, routes.actions)
+app.use('/api/subscriptions', authCheck, routes.subscriptions)
 
 // Error handler for authCheck middleware
 app.use((error, req, res, next) => {
