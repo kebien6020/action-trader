@@ -99,7 +99,7 @@ class NewActionDialog extends Component {
           />
           <Toggle
             label='Habilitada'
-            value={this.state.enabled}
+            toggled={this.state.enabled}
             labelStyle={{width: 'auto'}}
             trackStyle={{backgroundColor: this.props.muiTheme.palette.disabledColor}}
             thumbStyle={{backgroundColor: this.props.muiTheme.palette.primary2Color}}
