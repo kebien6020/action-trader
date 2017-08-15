@@ -14,7 +14,7 @@ class Home extends Component {
       <div>
         <h1>Action Trader</h1>
         <main>
-          Eventos recientes o algo asi iria aqui
+          <p>Eventos recientes o algo asi iria aqui</p>
           <RaisedButton
             label='Cerrar sesión'
             primary={true}
