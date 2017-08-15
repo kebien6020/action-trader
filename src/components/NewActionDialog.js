@@ -48,6 +48,7 @@ class NewActionDialog extends Component {
           width: '100%',
           maxWidth: 'none',
         }}
+        autoScrollBodyContent={true}
       >
           <TextField
             floatingLabelText='Nombre de la acción'
