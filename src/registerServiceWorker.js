@@ -19,7 +19,7 @@ const isLocalhost = Boolean(
 );
 
 export default function register() {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location);
     if (publicUrl.origin !== window.location.origin) {
@@ -29,22 +29,24 @@ export default function register() {
       return;
     }
 
-    window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+    return new Promise((resolve, reject) => {
+      window.addEventListener('load', () => {
+        const swUrl = `${process.env.PUBLIC_URL}/sw.js`;
+        if (!isLocalhost) {
+          // Is not local host. Just register service worker
+          registerValidSW(swUrl).then(resolve, reject)
+        } else {
+          // This is running on localhost. Lets check if a service worker still exists or not.
+          checkValidServiceWorker(swUrl).then(resolve, reject)
+        }
+      });
+    })
 
-      if (!isLocalhost) {
-        // Is not local host. Just register service worker
-        registerValidSW(swUrl);
-      } else {
-        // This is running on localhost. Lets check if a service worker still exists or not.
-        checkValidServiceWorker(swUrl);
-      }
-    });
   }
 }
 
 function registerValidSW(swUrl) {
-  navigator.serviceWorker
+  return navigator.serviceWorker
     .register(swUrl)
     .then(registration => {
       registration.onupdatefound = () => {
@@ -66,6 +68,7 @@ function registerValidSW(swUrl) {
           }
         };
       };
+      return registration
     })
     .catch(error => {
       console.error('Error during service worker registration:', error);
@@ -74,7 +77,7 @@ function registerValidSW(swUrl) {
 
 function checkValidServiceWorker(swUrl) {
   // Check if the service worker can be found. If it can't reload the page.
-  fetch(swUrl)
+  return fetch(swUrl)
     .then(response => {
       // Ensure service worker exists, and that we really are getting a JS file.
       if (
@@ -89,7 +92,7 @@ function checkValidServiceWorker(swUrl) {
         });
       } else {
         // Service worker found. Proceed as normal.
-        registerValidSW(swUrl);
+        return registerValidSW(swUrl);
       }
     })
     .catch(() => {

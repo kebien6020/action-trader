@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import RaisedButton from 'material-ui/RaisedButton'
+import { urlBase64ToUint8Array } from '../utils'
 
 class Home extends Component {
   static isPrivate = true
@@ -35,6 +36,24 @@ class Home extends Component {
     this.props.history.push('/')
   }
 
+  setupPush = async () => {
+    const registration = this.props.sw
+    // Ask permission to show notifications
+    // UX will be handled on the Home view
+    await Notification.requestPermission()
+    const subscribeOptions = {
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(
+        'BMCb0WE419jMMMOfTM3br1BtAXlcXoNvzeCFe2HCi2GySApZ7GsK4yzxOKZb19mYvXSmFWXWvmC-Ymz4T_EfrPY'
+      )
+    };
+
+    const pushSubscription =
+      await registration.pushManager.subscribe(subscribeOptions)
+
+    console.log(pushSubscription)
+  }
+
   render () {
     return (
       <div>
@@ -46,6 +65,12 @@ class Home extends Component {
             label='Cerrar sesión'
             primary={true}
             onClick={this.handleLogout}
+          />
+          <br />
+          <RaisedButton
+            label='Registrarse para recibir notificaciones'
+            primary={true}
+            onClick={this.setupPush}
           />
         </main>
       </div>

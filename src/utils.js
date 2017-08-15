@@ -12,3 +12,13 @@ export function fetchJson(url, auth, options) {
   const allOpts = Object.assign({}, options, {headers})
   return fetch(apiUrl + url, allOpts).then(res => res.json())
 }
+
+export function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4)
+  const base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/')
+
+  const rawData = window.atob(base64)
+  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)))
+}

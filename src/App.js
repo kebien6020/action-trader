@@ -27,7 +27,7 @@ class App extends Component {
             <SideNav />
 
             <Switch>
-              <Route exact path='/' component={Home} />
+              <Route exact sw={this.props.sw} path='/' component={Home} />
               <Route exact path='/actions' component={Actions} />
               <Route exact path='/authCallback' component={AuthCallback} />
               <Route component={NotFound} />
