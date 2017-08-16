@@ -5,6 +5,7 @@ exports.register = async((req, res, next) => {
   try {
     const userId = req.user.sub
     const { subscription } = req.body
+    // TODO: Verificate subscription as valid
     await (Subscription.create({userId, subscription}))
     res.json({success: true})
   } catch(err) { next(err) }
