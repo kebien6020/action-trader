@@ -152,3 +152,85 @@ describe('Actions API', () => {
 
   })
 })
+
+function clearSubscribe() {
+  return request('/subscriptions/unregister', {method: 'post'})
+}
+
+describe('Subscribe API', () => {
+  beforeEach(clearSubscribe)
+  afterAll(clearSubscribe)
+
+  it('is not registered initially', async () => {
+    const res = await request('/subscriptions/isSubscribed')
+
+    expect(res.success).toBe(true)
+    expect(res.isSubscribed).toBe(false)
+  })
+
+  it('registers a subscription successfully', async () => {
+    const subscription = {
+      endpoint: 'https://some.push.api/random-string',
+      expirationTime: null,
+      keys: {
+        p256dh: 'long-random-string-long-random-string-long-random-string-long-random-string',
+        auth: 'base-64-string==',
+      },
+    }
+
+    const body = JSON.stringify({
+      subscription: JSON.stringify(subscription)
+    })
+
+    const res = await request('/subscriptions/register', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body,
+    })
+
+    expect(res.success).toBe(true)
+
+    const res2 = await request('/subscriptions/isSubscribed')
+
+    expect(res2.success).toBe(true)
+    expect(res2.isSubscribed).toBe(true)
+  })
+
+  it('unregisters a subscription successfully', async () => {
+    const subscription = {
+      endpoint: 'https://some.push.api/random-string',
+      expirationTime: null,
+      keys: {
+        p256dh: 'long-random-string-long-random-string-long-random-string-long-random-string',
+        auth: 'base-64-string==',
+      },
+    }
+
+    const body = JSON.stringify({
+      subscription: JSON.stringify(subscription)
+    })
+
+    const res = await request('/subscriptions/register', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body,
+    })
+
+    expect(res.success).toBe(true)
+
+    const res2 = await request('/subscriptions/unregister',  {
+      method: 'post'
+    })
+
+    expect(res2.success).toBe(true)
+
+    const res3 = await request('/subscriptions/isSubscribed')
+
+    expect(res3.success).toBe(true)
+    expect(res3.isSubscribed).toBe(false)
+  })
+})
