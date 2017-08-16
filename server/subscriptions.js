@@ -14,11 +14,8 @@ exports.register = async((req, res, next) => {
 exports.unregister = async((req, res, next) => {
   try {
     const userId = req.user.sub
-    const sub = await (Subscription.findOne({where: {userId}}))
-    if (sub === null)
-      throw Error('not found')
-    await (sub.destroy())
-    res.json({success: true})
+    const rows = await (Subscription.destroy({where: {userId}}))
+    res.json({success: true, rows})
   } catch(err) { next(err) }
 })
 
