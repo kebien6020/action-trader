@@ -83,6 +83,10 @@ class Home extends Component {
     this.updateSubscribeButton()
   }
 
+  testPush = () => {
+    fetchJson('/testPush', this.props.auth).then(console.log)
+  }
+
   render () {
     const buttonText = this.state.disableNotifications ?
       'Notificaciones no permitidas' :
@@ -99,12 +103,18 @@ class Home extends Component {
             primary={true}
             onClick={this.handleLogout}
           />
-          <br />
+          <br /><br />
           <RaisedButton
             label={buttonText}
             disabled={this.state.disableNotifications}
             primary={true}
             onClick={this.setupPush}
+          />
+          <br /><br />
+          <RaisedButton
+            label='Probar push'
+            primary={true}
+            onClick={this.testPush}
           />
         </main>
       </div>

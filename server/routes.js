@@ -2,6 +2,7 @@ const Router = require('express').Router
 const actionHandlers = require('./actions')
 const subscriptionHandlers = require('./subscriptions')
 const jsonErrorHandler = require('./jsonErrors')
+const testPushHandler = require('./testPush')
 
 const actions = Router()
 
@@ -24,3 +25,8 @@ subscriptions.get('/isSubscribed', subscriptionHandlers.isSubscribed)
 subscriptions.use(jsonErrorHandler)
 
 exports.subscriptions = subscriptions
+
+const testPush = Router()
+testPush.get('/', testPushHandler)
+testPush.use(jsonErrorHandler)
+exports.testPush = testPush

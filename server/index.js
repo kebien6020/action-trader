@@ -1,4 +1,5 @@
 require('dotenv').config()
+require('dotenv').config({path: '.env.local'})
 const express = require('express')
 const path = require('path')
 const { Action, Sequelize } = require('../db/models')
@@ -35,6 +36,7 @@ app.use(express.static(BUILD_FOLDER))
 
 app.use('/api/actions', authCheck, routes.actions)
 app.use('/api/subscriptions', authCheck, routes.subscriptions)
+app.use('/api/testPush', authCheck, routes.testPush)
 
 // Error handler for authCheck middleware
 app.use((error, req, res, next) => {
