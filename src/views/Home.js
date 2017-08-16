@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import RaisedButton from 'material-ui/RaisedButton'
 import { urlBase64ToUint8Array } from '../utils'
 
+const SUBSCRIBE_PUBLIC_KEY = process.env.REACT_APP_SUBSCRIBE_PUBLIC_KEY
+
 class Home extends Component {
   static isPrivate = true
 
@@ -43,9 +45,7 @@ class Home extends Component {
     await Notification.requestPermission()
     const subscribeOptions = {
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(
-        'BMCb0WE419jMMMOfTM3br1BtAXlcXoNvzeCFe2HCi2GySApZ7GsK4yzxOKZb19mYvXSmFWXWvmC-Ymz4T_EfrPY'
-      )
+      applicationServerKey: urlBase64ToUint8Array(SUBSCRIBE_PUBLIC_KEY)
     };
 
     const pushSubscription =
