@@ -8,33 +8,20 @@ class Home extends Component {
   static isPrivate = true
 
   state = {
-    notificationMessage: '',
-    subscribed: false,
-    disableNotifications: false,
+    subscribedStatus: 'disabled' // subscribed, disabled, blocked or enabled
   }
+
+  subscribed = null
 
   componentWillMount = async () => {
     if ('PushManager' in window) {
-      this.setState({
-        notificationMessage: 'Este navegador permite notificaciones.'
-      })
+      this.setState({ subscribedStatus: 'enabled' })
     } else {
-      this.setState({
-        notificationMessage: 'Este navegador no permite notificaciones.'
-      })
+      this.setState({ subscribedStatus: 'disabled' })
     }
 
-    const notificationsEnabled =
-      (await Notification.requestPermission()) === 'granted'
-    const serviceWorkerEnabled = 'serviceWorker' in navigator
-
-    if (notificationsEnabled && serviceWorkerEnabled) {
-      this.setState({
-        notificationMessage: 'Las notificaciones están activadas'
-      })
-    }
-
-    this.updateSubscribeButton()
+    if (await (this.isSubscribed()))
+      this.setState({ subscribedStatus: 'subscribed' })
   }
 
   handleLogout = () => {
@@ -42,45 +29,54 @@ class Home extends Component {
     this.props.history.push('/')
   }
 
-  updateSubscribeButton = async () => {
+  isSubscribed = async () => {
+    if (this.subscribed !== null)
+      return this.subscribed
+
     const {isSubscribed} =
       await fetchJson('/subscriptions/isSubscribed', this.props.auth)
 
-    const permission = await Notification.requestPermission()
-    if (permission !== 'granted')
-      this.setState({disableNotifications: true})
-
-    this.setState({subscribed: isSubscribed})
+    this.subscribed = isSubscribed
+    return this.subscribed
   }
 
-  setupPush = async () => {
-    // TODO: Allow to unregister from push
-    const registration = this.props.sw
-    // Ask permission to show notifications
-    // UX will be handled on the Home view
-    const permission = await Notification.requestPermission()
-    if (permission !== 'granted')
-      return this.setState({disableNotifications: true})
+  toggleSubscribe = async () => {
+    const wantToSubscribe = this.state.subscribedStatus !== 'subscribed'
+    if (wantToSubscribe) {
+      const registration = this.props.sw
+      // Ask permission to show notifications
+      const permission = await Notification.requestPermission()
+      if (permission !== 'granted')
+        return this.setState({subscribedStatus: 'blocked'})
 
-    const subscribeOptions = {
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(SUBSCRIBE_PUBLIC_KEY)
-    };
+      const subscribeOptions = {
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(SUBSCRIBE_PUBLIC_KEY)
+      }
 
-    const pushSubscription =
-      await registration.pushManager.subscribe(subscribeOptions)
+      const pushSubscription =
+        await registration.pushManager.subscribe(subscribeOptions)
 
-    await fetchJson('/subscriptions/register', this.props.auth, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        subscription: JSON.stringify(pushSubscription)
+      const { success } = await fetchJson('/subscriptions/register', this.props.auth, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subscription: JSON.stringify(pushSubscription)
+        })
       })
-    })
 
-    this.updateSubscribeButton()
+      if (success)
+        this.setState({subscribedStatus: 'subscribed'})
+    } else {
+      // We want to unsubscribe
+      const { success } = await fetchJson('/subscriptions/unregister', this.props.auth, {
+        method: 'post',
+      })
+      if (success)
+        this.setState({subscribedStatus: 'enabled'})
+    }
   }
 
   testPush = () => {
@@ -88,11 +84,30 @@ class Home extends Component {
   }
 
   render () {
-    const buttonText = this.state.disableNotifications ?
-      'Notificaciones no permitidas' :
-      (this.state.subscribed ?
-        'Dejar de recibir notificaciones' :
-        'Registrarse para recibir notificaciones')
+    let buttonText = null
+    let buttonDisabled = true
+
+    switch (this.state.subscribedStatus) {
+    case 'subscribed':
+      buttonText = 'Dejar de recibir notificaciones'
+      buttonDisabled = false
+      break
+    case 'disabled':
+      buttonText = 'Navegador no soporta notificaciones'
+      buttonDisabled = true
+      break
+    case 'blocked':
+      buttonText = 'Notificaciones no permitidas'
+      buttonDisabled = true
+      break
+    case 'enabled':
+      buttonText = 'Activar notificaciones'
+      buttonDisabled = false
+      break
+    default:
+      console.log(this.state.subscribedStatus)
+    }
+
     return (
       <div>
         <h1>Action Trader</h1>
@@ -106,9 +121,9 @@ class Home extends Component {
           <br /><br />
           <RaisedButton
             label={buttonText}
-            disabled={this.state.disableNotifications}
+            disabled={buttonDisabled}
             primary={true}
-            onClick={this.setupPush}
+            onClick={this.toggleSubscribe}
           />
           <br /><br />
           <RaisedButton
