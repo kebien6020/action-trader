@@ -13,7 +13,10 @@ import IconButton from 'material-ui/IconButton'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import RefreshIndicator from 'material-ui/RefreshIndicator'
 import Paper from 'material-ui/Paper'
+import {Tabs, Tab} from 'material-ui/Tabs'
 import muiThemeable from 'material-ui/styles/muiThemeable'
+import SwipeableViews from 'react-swipeable-views'
+import Portal from 'react-portal-minimal'
 import { fetchJson } from '../utils'
 import Ticker from '../ticker'
 
@@ -35,7 +38,7 @@ class Actions extends Component {
       targetOrigin={{horizontal: 'right', vertical: 'top'}}
       anchorOrigin={{horizontal: 'right', vertical: 'top'}}
     >
-      <MenuItem primaryText="Actualizar" onTouchTap={() => this.getActions()} />
+      <MenuItem primaryText="Actualizar lista" onTouchTap={() => this.getActions()} />
     </IconMenu>
   )
 
@@ -48,6 +51,7 @@ class Actions extends Component {
     refreshStatus: 'hide',
     tickerConnected: false,
     tickerPrice: null,
+    tabIndex: 1,
   }
 
   styles = {
@@ -55,7 +59,11 @@ class Actions extends Component {
       position: 'fixed',
       bottom: '20px',
       right: '20px',
-      zIndex: 900
+      zIndex: 900,
+      flexDirection: 'row',
+      transition: 'transform 0.35s cubic-bezier(0.15, 0.3, 0.25, 1) 0s',
+      direction: 'ltr',
+      display: 'flex',
     },
     minibar: {
       backgroundColor: this.props.muiTheme.palette.primary2Color,
@@ -227,39 +235,59 @@ class Actions extends Component {
     return this.getActions()
   }
 
+  handleChangeTab = index => {
+    this.setState({tabIndex: index})
+  }
+
   render () {
+    const fabStyle = Object.assign({}, this.styles.fab)
+    const translateFab = -100 * (this.state.tabIndex - 1)
+    fabStyle.transform = `translate(${translateFab}vh, 0px)`
     return (
       <div>
-        <Paper
-          style={this.styles.minibar}
-        >
-          {this.state.tickerConnected && `Precio BTC: ${this.state.tickerPrice} USD`}
-        </Paper>
-        <FloatingActionButton
-          style={this.styles.fab}
-          secondary={true}
-          onTouchTap={this.openAddDialog}
-        >
-          <PlusIcon />
-        </FloatingActionButton>
-        {this.state.errorFetching
-          ? `Error descargando la lista de acciones: ${this.state.errorMsg}`
-          : <List>
-              {this.state.actions.map(this.renderAction)}
-            </List>
-        }
-        <NewActionDialog
-          open={this.state.showAddDialog}
-          onCancel={this.closeDialogs}
-          onCreate={this.handleNewAction}
-        />
-        <RefreshIndicator
-          status={this.state.refreshStatus}
-          top={80}
-          size={40}
-          left={-20}
-          style={{marginLeft: '50%'}}
-        />
+        <Tabs onChange={this.handleChangeTab} value={this.state.tabIndex}>
+          <Tab label='Generadores' value={0} />
+          <Tab label='Lista' value={1} />
+        </Tabs>
+        <SwipeableViews onChange={this.handleChangeTab} index={this.state.tabIndex}>
+          <div className="generators">
+            Generadores
+          </div>
+          <div className='list'>
+            <Paper
+              style={this.styles.minibar}
+            >
+              {this.state.tickerConnected && `Precio BTC: ${this.state.tickerPrice} USD`}
+            </Paper>
+            <Portal>
+              <FloatingActionButton
+                style={fabStyle}
+                secondary={true}
+                onTouchTap={this.openAddDialog}
+              >
+                <PlusIcon />
+              </FloatingActionButton>
+            </Portal>
+            {this.state.errorFetching
+              ? `Error descargando la lista de acciones: ${this.state.errorMsg}`
+              : <List>
+                  {this.state.actions.map(this.renderAction)}
+                </List>
+            }
+            <NewActionDialog
+              open={this.state.showAddDialog}
+              onCancel={this.closeDialogs}
+              onCreate={this.handleNewAction}
+            />
+            <RefreshIndicator
+              status={this.state.refreshStatus}
+              top={80}
+              size={40}
+              left={-20}
+              style={{marginLeft: '50%'}}
+            />
+          </div>
+        </SwipeableViews>
       </div>
     )
   }
