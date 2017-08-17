@@ -65,12 +65,13 @@ class Actions extends Component {
     },
   }
 
+  ticker = new Ticker('USDT_BTC')
+
   constructor(props) {
     super(props)
-    const ticker = new Ticker('USDT_BTC')
-    ticker.on('open', () => this.setState({tickerConnected: true}))
-    ticker.on('close', () => this.setState({tickerConnected: false}))
-    ticker.on('ticker', ({last}) => this.setState({tickerPrice: last}))
+    this.ticker.on('open', () => this.setState({tickerConnected: true}))
+    this.ticker.on('close', () => this.setState({tickerConnected: false}))
+    this.ticker.on('ticker', ({last}) => this.setState({tickerPrice: last}))
   }
 
   getActions = async () => {
@@ -118,6 +119,7 @@ class Actions extends Component {
 
   componentWillUnmount = () => {
     navigator.serviceWorker.removeEventListener('message', this.handleSWMessage)
+    this.ticker.close()
   }
 
   closeDialogs = () => this.setState({showAddDialog: false})

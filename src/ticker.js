@@ -50,4 +50,8 @@ module.exports = class Ticker extends EventEmitter {
 
     connection.open()
   }
+
+  close() {
+    connection.close()
+  }
 }
