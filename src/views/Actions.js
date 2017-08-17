@@ -55,7 +55,12 @@ class Actions extends Component {
         actionNames[action.id] = action.name
       }
 
-      this.setState({actions, actionNames})
+      this.setState({
+        actions,
+        actionNames,
+        errorFetching: false,
+        errorMsg: ''
+      })
 
     } catch (err) {
       this.setState({errorFetching: true, errorMsg: err.message})
