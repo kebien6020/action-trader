@@ -82,58 +82,55 @@ const getTarget = ({triggerName, owner}) => {
   }))
 }
 
+let lock = false
+
 ticker.on('ticker', async (({last: currPrice}) => {
-  do {
-    // Get the actions we ought to do and tag them with their index in the array
-    const actionsToDo = await (Action.findAll())
-      .filter(isDue(currPrice))
+  if (lock) return
+  lock = true
+  // Get the actions we ought to do and tag them with their index in the array
+  const actionsToDo = await (Action.findAll())
+    .filter(isDue(currPrice))
 
-    // Execute and remove each one of them
-    for (const action of actionsToDo) {
-      switch (action.type) {
-      case 'enable':
-      {
-        const target = await (getTarget(action))
-        console.log(target)
-        if(target) {
-          target.enabled = true
-          await (target.save())
-        }
-        console.log(`Action ${action.name} triggered at ${currPrice}, enabling action ${target.name}`)
-        break
+  // Execute and remove each one of them
+  for (const action of actionsToDo) {
+    switch (action.type) {
+    case 'enable':
+    {
+      const target = await (getTarget(action))
+      console.log(target)
+      if(target) {
+        target.enabled = true
+        await (target.save())
       }
-      case 'disable':
-      {
-        const target = await (getTarget(action))
-        if(target) {
-          target.enabled = false
-          await (target.save())
-        }
-        console.log(`Action ${action.name} triggered at ${currPrice}, disabling action ${target.name}`)
-        break
+      console.log(`Action ${action.name} triggered at ${currPrice}, enabling action ${target.name}`)
+      break
+    }
+    case 'disable':
+    {
+      const target = await (getTarget(action))
+      if(target) {
+        target.enabled = false
+        await (target.save())
       }
-      case 'sell':
-      {
-        console.log('Selling at ' + action.value)
-        push(action.owner, `Alerta: Vender a ${action.value}`)
-        break
-      }
-      case 'buy':
-      {
-        console.log('Buying at' + action.value)
-        push(action.owner, `Alerta: Comprar a ${action.value}`)
-        break
+      console.log(`Action ${action.name} triggered at ${currPrice}, disabling action ${target.name}`)
+      break
+    }
+    case 'sell':
+    {
+      console.log('Selling at ' + action.value)
+      push(action.owner, `Alerta: Vender a ${action.value}`)
+      break
+    }
+    case 'buy':
+    {
+      console.log('Buying at ' + action.value)
+      push(action.owner, `Alerta: Comprar a ${action.value}`)
+      break
 
-      }
-      }
-
-      await (action.destroy())
+    }
     }
 
-    if (actionsToDo.length > 0) {
-      console.log(await (Action.findAll()))
-    }
-
-  } while (await (Action.findAll()).some(isDue(currPrice)))
-
+    await (action.destroy())
+  }
+  lock = false
 }))
