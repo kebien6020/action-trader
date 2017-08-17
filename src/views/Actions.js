@@ -105,7 +105,7 @@ class Actions extends Component {
     case 'sell':
       return `Vender a ${action.value}` + this.genCondText(action)
     case 'buy':
-      return `Vender a ${action.value}` + this.genCondText(action)
+      return `Comprar a ${action.value}` + this.genCondText(action)
     default:
       return `Acción inválida`
     }
