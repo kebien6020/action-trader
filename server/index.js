@@ -9,6 +9,8 @@ const cors = require('cors')
 const jwt = require('express-jwt')
 const jwks = require('jwks-rsa')
 const routes = require('./routes')
+const Ticker = require('./ticker')
+const push = require('./push')
 
 const PORT = 9000
 const BUILD_FOLDER = path.resolve('./build')
@@ -48,3 +50,90 @@ app.get('*', (req, res) => {
 })
 
 app.listen(PORT, () => console.info(`Server listening on PORT ${PORT}...`))
+
+//
+// Poloniex ticker logic
+//
+
+const CURRENCY_PAIR = 'USDT_BTC'
+
+const ticker = new Ticker(CURRENCY_PAIR)
+
+ticker.on('open', () => console.log('Connected to poloniex ticker successfully'))
+
+ticker.on('close', () => console.log('Ticker websocket connection closed'))
+
+// Judge wether an action is due
+const isDue = currPrice => action => {
+  if (!action.enabled) return false
+  if (action.check)
+    switch (action.check) {
+    case 'gt':
+      return Number(currPrice) > action.value
+    case 'lt':
+      return Number(currPrice) < action.value
+    }
+  return true
+}
+
+const getTarget = ({triggerName, owner}) => {
+  return (Action.findOne({
+    where: {name: triggerName, owner}
+  }))
+}
+
+ticker.on('ticker', async (({last: currPrice}) => {
+  do {
+    // Get the actions we ought to do and tag them with their index in the array
+    const actionsToDo = await (Action.findAll())
+      .filter(isDue(currPrice))
+
+    // Execute and remove each one of them
+    for (const action of actionsToDo) {
+      switch (action.type) {
+      case 'enable':
+      {
+        const target = await (getTarget(action))
+        console.log(target)
+        if(target) {
+          target.enabled = true
+          await (target.save())
+        }
+        console.log(`Action ${action.name} triggered at ${currPrice}, enabling action ${target.name}`)
+        break
+      }
+      case 'disable':
+      {
+        const target = await (getTarget(action))
+        if(target) {
+          target.enabled = false
+          await (target.save())
+        }
+        console.log(`Action ${action.name} triggered at ${currPrice}, disabling action ${target.name}`)
+        break
+      }
+      case 'sell':
+      {
+        console.log('Selling at ' + action.value)
+        push(action.owner, `Alerta: Vender a ${action.value}`)
+        break
+      }
+      case 'buy':
+      {
+        console.log('Buying at' + action.value)
+        push(action.owner, `Alerta: Comprar a ${action.value}`)
+        break
+
+      }
+      }
+
+      await (action.destroy())
+    }
+
+    if (actionsToDo.length > 0) {
+      console.log(await (Action.findAll()))
+    }
+
+  } while (await (Action.findAll()).some(isDue(currPrice)))
+
+}))

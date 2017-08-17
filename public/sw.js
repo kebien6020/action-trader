@@ -10,5 +10,13 @@ self.addEventListener('push', event => {
   const notificationPromise =
     self.registration.showNotification(notificationMessage, notificationOptions)
 
-  event.waitUntil(notificationPromise)
+  const clientsPromise = self.clients
+    .matchAll()
+    .then(clients => {
+      for (const client of clients)
+        client.postMessage('update')
+    })
+
+
+  event.waitUntil(Promise.all([clientsPromise, notificationPromise]))
 })

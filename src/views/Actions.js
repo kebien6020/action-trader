@@ -62,8 +62,19 @@ class Actions extends Component {
     }
   }
 
+  handleSWMessage = event => {
+    if (event.data === 'update')
+      this.getActions()
+  }
+
   componentWillMount = async () => {
+    navigator.serviceWorker.addEventListener('message', this.handleSWMessage)
+
     return this.getActions()
+  }
+
+  componentWillUnmount = () => {
+    navigator.serviceWorker.removeEventListener('message', this.handleSWMessage)
   }
 
   closeDialogs = () => this.setState({showAddDialog: false})

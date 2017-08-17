@@ -10,7 +10,11 @@ export function fetchJson(url, auth, options) {
 
   const headers = Object.assign({}, baseHeaders, opts.headers)
   const allOpts = Object.assign({}, options, {headers})
-  return fetch(apiUrl + url, allOpts).then(res => res.json())
+  return fetch(apiUrl + url, allOpts).then(res => res.json()).then(data => {
+    if (data.success === false && data.error.name === 'UnauthorizedError')
+      auth.login()
+    return data
+  })
 }
 
 export function urlBase64ToUint8Array(base64String) {
