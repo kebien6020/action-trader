@@ -22,3 +22,5 @@ yarn-error.log*
 
 /assets
 db.sqlite
+upload.cmd
+/backups
