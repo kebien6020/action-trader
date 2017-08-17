@@ -11,17 +11,12 @@ import IconMenu from 'material-ui/IconMenu'
 import MenuItem from 'material-ui/MenuItem'
 import IconButton from 'material-ui/IconButton'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
+import RefreshIndicator from 'material-ui/RefreshIndicator'
+import Paper from 'material-ui/Paper'
+import muiThemeable from 'material-ui/styles/muiThemeable'
 import { fetchJson } from '../utils'
+import Ticker from '../ticker'
 
-
-const styles = {
-  fab: {
-    position: 'fixed',
-    bottom: '20px',
-    right: '20px',
-    zIndex: 900
-  },
-}
 
 const gray = 'rgba(0, 0, 0, 0.6)'
 const red = 'red'
@@ -40,7 +35,7 @@ class Actions extends Component {
       targetOrigin={{horizontal: 'right', vertical: 'top'}}
       anchorOrigin={{horizontal: 'right', vertical: 'top'}}
     >
-      <MenuItem primaryText="Actualizar" />
+      <MenuItem primaryText="Actualizar" onTouchTap={() => this.getActions()} />
     </IconMenu>
   )
 
@@ -50,9 +45,36 @@ class Actions extends Component {
     actionNames: {},
     errorFetching: false,
     errorMsg: null,
+    refreshStatus: 'hide',
+    tickerConnected: false,
+    tickerPrice: null,
+  }
+
+  styles = {
+    fab: {
+      position: 'fixed',
+      bottom: '20px',
+      right: '20px',
+      zIndex: 900
+    },
+    minibar: {
+      backgroundColor: this.props.muiTheme.palette.primary2Color,
+      color: this.props.muiTheme.palette.alternateTextColor,
+      paddingLeft: '20px',
+      paddingRight: '20px',
+    },
+  }
+
+  constructor(props) {
+    super(props)
+    const ticker = new Ticker('USDT_BTC')
+    ticker.on('open', () => this.setState({tickerConnected: true}))
+    ticker.on('close', () => this.setState({tickerConnected: false}))
+    ticker.on('ticker', ({last}) => this.setState({tickerPrice: last}))
   }
 
   getActions = async () => {
+    this.setState({refreshStatus: 'loading'})
     try {
       const response = await fetchJson('/actions', this.props.auth)
       if (!response.success)
@@ -76,6 +98,8 @@ class Actions extends Component {
 
     } catch (err) {
       this.setState({errorFetching: true, errorMsg: err.message})
+    } finally {
+      this.setState({refreshStatus: 'hide'})
     }
   }
 
@@ -204,8 +228,13 @@ class Actions extends Component {
   render () {
     return (
       <div>
+        <Paper
+          style={this.styles.minibar}
+        >
+          {this.state.tickerConnected && `Precio BTC: ${this.state.tickerPrice} USD`}
+        </Paper>
         <FloatingActionButton
-          style={styles.fab}
+          style={this.styles.fab}
           secondary={true}
           onTouchTap={this.openAddDialog}
         >
@@ -221,12 +250,17 @@ class Actions extends Component {
           open={this.state.showAddDialog}
           onCancel={this.closeDialogs}
           onCreate={this.handleNewAction}
-        >
-
-        </NewActionDialog>
+        />
+        <RefreshIndicator
+          status={this.state.refreshStatus}
+          top={80}
+          size={40}
+          left={-20}
+          style={{marginLeft: '50%'}}
+        />
       </div>
     )
   }
 }
 
-export default Actions
+export default muiThemeable()(Actions)
