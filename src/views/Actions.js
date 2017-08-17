@@ -32,6 +32,18 @@ const orange = 'orange'
 class Actions extends Component {
   static isPrivate = true
 
+  menu = (
+    <IconMenu
+      iconButtonElement={
+        <IconButton><MoreVertIcon /></IconButton>
+      }
+      targetOrigin={{horizontal: 'right', vertical: 'top'}}
+      anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+    >
+      <MenuItem primaryText="Actualizar" />
+    </IconMenu>
+  )
+
   state = {
     showAddDialog: false,
     actions: [],
@@ -73,6 +85,8 @@ class Actions extends Component {
   }
 
   componentWillMount = async () => {
+    this.props.onMount({menu: this.menu})
+
     navigator.serviceWorker.addEventListener('message', this.handleSWMessage)
 
     return this.getActions()

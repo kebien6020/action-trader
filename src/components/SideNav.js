@@ -26,9 +26,9 @@ class SideNav extends Component {
       <div>
         <AppBar
           title='Action Trader'
-          iconClassNameRight='muidocs-icon-navigation-expand-more'
           onLeftIconButtonTouchTap={() =>
             this.setState({ open: !this.state.open })}
+          iconElementRight={this.props.menu}
           className='appbar'
         />
         <Drawer

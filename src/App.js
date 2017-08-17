@@ -19,16 +19,30 @@ import './App.css'
 injectTapEventPlugin()
 
 class App extends Component {
+  state = {
+    appbarMenu: null
+  }
+
+  setupAppbar = ({menu}) => {
+    if (menu !== undefined)
+      this.setState({appbarMenu: menu})
+  }
+
   render() {
     return (
       <BrowserRouter>
         <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
           <div>
-            <SideNav />
+            <SideNav menu={this.state.appbarMenu} />
 
             <Switch>
-              <Route exact sw={this.props.sw} path='/' component={Home} />
-              <Route exact path='/actions' component={Actions} />
+              <Route exact path='/' component={Home}
+                sw={this.props.sw}
+                onMount={this.setupAppbar}
+              />
+              <Route exact path='/actions' component={Actions}
+                onMount={this.setupAppbar}
+              />
               <Route exact path='/authCallback' component={AuthCallback} />
               <Route component={NotFound} />
             </Switch>

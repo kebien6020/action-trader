@@ -14,6 +14,8 @@ class Home extends Component {
   subscribed = null
 
   componentWillMount = async () => {
+    this.props.onMount({menu: null})
+
     if ('PushManager' in window) {
       this.setState({ subscribedStatus: 'enabled' })
     } else {
