@@ -3,6 +3,7 @@ import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
 import SideBarItem from './SideBarItem'
 import { List } from 'material-ui/List'
+import theme from '../theme'
 
 /*
   Add you nav links here..
@@ -15,6 +16,18 @@ const links = [
   { isExact: true, linkTo: '/', text: 'Home' },
   { isExact: false, linkTo: '/actions', text: 'Acciones' }
 ]
+
+const styles = {
+  logoDiv: {
+    height: '150px',
+    backgroundColor: theme.palette.primary1Color,
+  },
+  logo: {
+    margin: '20px',
+    width: '50px',
+    height: '50px',
+  }
+}
 
 class SideNav extends Component {
   state = { open: false }
@@ -37,6 +50,9 @@ class SideNav extends Component {
           docked={false}
           onRequestChange={open => this.setState({ open })}
         >
+          <div style={styles.logoDiv}>
+            <img src='android-chrome-192x192.png' alt='logo' style={styles.logo} />
+          </div>
           <List>
             {links.map((link, i) => {
               return (
