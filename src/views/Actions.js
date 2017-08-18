@@ -52,7 +52,7 @@ class Actions extends Component {
     refreshStatus: 'hide',
     tickerConnected: false,
     tickerPrice: null,
-    tabIndex: 1,
+    tabIndex: 0,
   }
 
   styles = {
@@ -263,12 +263,12 @@ class Actions extends Component {
           <Tab label='Generadores' value={0} />
           <Tab label='Lista' value={1} />
         </Tabs>
-        <SwipeableViews onChange={this.handleChangeTab} index={this.state.tabIndex}>
+        <SwipeableViews onChangeIndex={this.handleChangeTab} index={this.state.tabIndex}>
           <div className="generators">
             <div style={this.styles.row}>
               <GeneratorCard
                 title='Escalera para venta'
-                onClick={this.handleGeneratorStairsUp}
+                onTouchTap={this.handleGeneratorStairsUp}
               >
                 Generar acciones por pasos para ir moviendo un stop limit mientras el precio sube hasta que la tendencia se revierta
               </GeneratorCard>
