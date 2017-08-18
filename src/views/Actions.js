@@ -127,7 +127,11 @@ class Actions extends Component {
 
   componentWillUnmount = () => {
     navigator.serviceWorker.removeEventListener('message', this.handleSWMessage)
-    this.ticker.close()
+    try {
+      this.ticker.close()
+    } catch (err) {
+      // It was already closed, no big deal
+    }
   }
 
   closeDialogs = () => this.setState({showAddDialog: false})
@@ -257,7 +261,8 @@ class Actions extends Component {
             <Paper
               style={this.styles.minibar}
             >
-              {this.state.tickerConnected && `Precio BTC: ${this.state.tickerPrice} USD`}
+              {this.state.tickerConnected && this.state.tickerPrice && `Precio BTC: ${this.state.tickerPrice} USD`}
+              {this.state.tickerPrice === null ? 'Consultando precio en poloniex...' : null}
             </Paper>
             <Portal>
               <FloatingActionButton
