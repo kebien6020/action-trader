@@ -13,7 +13,9 @@ import IconButton from 'material-ui/IconButton'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import RefreshIndicator from 'material-ui/RefreshIndicator'
 import Paper from 'material-ui/Paper'
-import {Tabs, Tab} from 'material-ui/Tabs'
+import { Tabs, Tab } from 'material-ui/Tabs'
+import { Card, CardTitle, CardText } from 'material-ui/Card'
+import GeneratorCard from '../components/GeneratorCard'
 import muiThemeable from 'material-ui/styles/muiThemeable'
 import SwipeableViews from 'react-swipeable-views'
 import Portal from 'react-portal-minimal'
@@ -71,6 +73,11 @@ class Actions extends Component {
       paddingLeft: '20px',
       paddingRight: '20px',
     },
+    row: {
+      display: 'flex',
+      justifyContent: 'space-evenly',
+      flexWrap: 'wrap',
+    }
   }
 
   ticker = new Ticker('USDT_BTC')
@@ -255,7 +262,17 @@ class Actions extends Component {
         </Tabs>
         <SwipeableViews onChange={this.handleChangeTab} index={this.state.tabIndex}>
           <div className="generators">
-            Generadores
+            <div style={this.styles.row}>
+              <GeneratorCard title='Escalera para venta'>
+                Generar acciones por pasos para ir moviendo un stop limit mientras el precio sube hasta que la tendencia se revierta
+              </GeneratorCard>
+              <GeneratorCard title='Escalera para compra'>
+                Generar acciones por pasos para ir moviendo un stop limit mientras el precio sube hasta que la tendencia se revierta
+              </GeneratorCard>
+              <GeneratorCard title='Stop limit'>
+                Stop limit similar al de Poloniex
+              </GeneratorCard>
+            </div>
           </div>
           <div className='list'>
             <Paper
