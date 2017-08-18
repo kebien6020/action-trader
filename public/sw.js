@@ -5,7 +5,8 @@ self.addEventListener('install', event  =>
 self.addEventListener('push', event => {
   const notificationMessage = event.data.text()
   const notificationOptions = {
-    icon: '/android-chrome-192x192.png'
+    icon: '/android-chrome-192x192.png',
+    requireInteraction: true
   }
   const notificationPromise =
     self.registration.showNotification(notificationMessage, notificationOptions)
