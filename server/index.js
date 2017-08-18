@@ -57,11 +57,14 @@ app.listen(PORT, () => console.info(`Server listening on PORT ${PORT}...`))
 
 const CURRENCY_PAIR = 'USDT_BTC'
 
-const ticker = new Ticker(CURRENCY_PAIR)
+let ticker = new Ticker(CURRENCY_PAIR)
 
 ticker.on('open', () => console.log('Connected to poloniex ticker successfully'))
 
-ticker.on('close', () => console.log('Ticker websocket connection closed'))
+ticker.on('close', () => {
+  console.log('Ticker websocket connection closed')
+  ticker = new Ticker(CURRENCY_PAIR)
+})
 
 // Judge wether an action is due
 const isDue = currPrice => action => {
