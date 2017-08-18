@@ -14,7 +14,6 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import RefreshIndicator from 'material-ui/RefreshIndicator'
 import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
-import { Card, CardTitle, CardText } from 'material-ui/Card'
 import GeneratorCard from '../components/GeneratorCard'
 import muiThemeable from 'material-ui/styles/muiThemeable'
 import SwipeableViews from 'react-swipeable-views'
@@ -74,9 +73,9 @@ class Actions extends Component {
       paddingRight: '20px',
     },
     row: {
-      display: 'flex',
-      justifyContent: 'space-evenly',
-      flexWrap: 'wrap',
+      paddingLeft: '16px',
+      paddingRight: '16px',
+      paddingTop: '16px',
     }
   }
 
@@ -250,6 +249,10 @@ class Actions extends Component {
     this.setState({tabIndex: index})
   }
 
+  handleGeneratorStairsUp = () => {
+    console.log('here')
+  }
+
   render () {
     const fabStyle = Object.assign({}, this.styles.fab)
     const translateFab = -100 * (this.state.tabIndex - 1)
@@ -263,11 +266,14 @@ class Actions extends Component {
         <SwipeableViews onChange={this.handleChangeTab} index={this.state.tabIndex}>
           <div className="generators">
             <div style={this.styles.row}>
-              <GeneratorCard title='Escalera para venta'>
+              <GeneratorCard
+                title='Escalera para venta'
+                onClick={this.handleGeneratorStairsUp}
+              >
                 Generar acciones por pasos para ir moviendo un stop limit mientras el precio sube hasta que la tendencia se revierta
               </GeneratorCard>
               <GeneratorCard title='Escalera para compra'>
-                Generar acciones por pasos para ir moviendo un stop limit mientras el precio sube hasta que la tendencia se revierta
+                Generar acciones por pasos para ir moviendo un stop limit mientras el precio baja hasta que la tendencia se revierta
               </GeneratorCard>
               <GeneratorCard title='Stop limit'>
                 Stop limit similar al de Poloniex

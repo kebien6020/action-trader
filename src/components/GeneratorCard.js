@@ -3,8 +3,10 @@ import { Card, CardTitle, CardText } from 'material-ui/Card'
 
 const styles = {
   card: {
-    width: '45%',
-    marginTop: '16px',
+    width: '100%',
+    display: 'inline-block',
+    marginBottom: '16px',
+    cursor: 'pointer',
   }
 }
 
