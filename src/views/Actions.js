@@ -14,6 +14,9 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import RefreshIndicator from 'material-ui/RefreshIndicator'
 import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
+import TextField from 'material-ui/TextField'
+import LinearProgress from 'material-ui/LinearProgress'
+
 import GeneratorCard from '../components/GeneratorCard'
 import muiThemeable from 'material-ui/styles/muiThemeable'
 import SwipeableViews from 'react-swipeable-views'
@@ -53,6 +56,12 @@ class Actions extends Component {
     tickerConnected: false,
     tickerPrice: null,
     tabIndex: 0,
+    'upstairs.initialValue': null,
+    'upstairs.step': '20',
+    'upstairs.stopDistance': '60',
+    'upstairs.stepQty': '20',
+    'upstairs.limitDelta': '2',
+    'upstairs.genPercentage': null,
   }
 
   styles = {
@@ -249,14 +258,100 @@ class Actions extends Component {
     this.setState({tabIndex: index})
   }
 
-  handleGeneratorStairsUp = () => {
-    console.log('here')
+  handleUpStairsChange = event => {
+    const {name, value} = event.target
+    this.setState({[`upstairs.${name}`]: value})
+  }
+
+  handleGenerateUpstairs = async () => {
+    const initialValue = Number(this.state['upstairs.initialValue'])
+    const step = Number(this.state['upstairs.step'])
+    const stopDistance = Number(this.state['upstairs.stopDistance'])
+    const stepQty = Number(this.state['upstairs.stepQty'])
+    const limitDelta = Number(this.state['upstairs.limitDelta'])
+
+    // Settle on an unique prefix
+    let prefixIndex = 1
+    const makePrefix = i => `[V${i}]`
+    const actionNames = this.state.actions.map(a => a.name)
+    const startWithPrefix = name =>
+      name.startsWith(makePrefix(prefixIndex))
+
+    while(actionNames.some(startWithPrefix))
+      ++prefixIndex
+
+    const prefix = makePrefix(prefixIndex)
+
+    const actions = []
+    for (let i = 1; i <= stepQty; ++i) {
+      const currentStepValue = initialValue + (i - 1) * step
+      const currentStopLimit = currentStepValue - stopDistance
+      const currentLimit = currentStopLimit - limitDelta
+      // Disable previous stop limit
+      if (i > 1) {
+        actions.push({
+          name: `${prefix} Paso ${i} mover stop`,
+          type: 'disable',
+          triggerName: `${prefix} Paso ${i - 1} stop`,
+          check: 'gt',
+          value: currentStepValue,
+          enabled: true,
+        })
+      }
+      // Enable current stop limit
+      actions.push({
+        name: `${prefix} Paso ${i} stop stop`,
+        type: 'enable',
+        triggerName: `${prefix} Paso ${i} stop`,
+        check: 'gt',
+        value: currentStepValue,
+        enabled: true,
+      })
+
+      // Stop limit
+      actions.push({
+        name: `${prefix} Paso ${i} stop`,
+        type: 'enable',
+        triggerName: `${prefix} Paso ${i} limit`,
+        check: 'lt',
+        value: currentStopLimit,
+        enabled: false,
+      })
+
+      // Limit
+      actions.push({
+        name: `${prefix} Paso ${i} limit`,
+        type: 'sell',
+        value: currentLimit,
+        enabled: false,
+      })
+    }
+
+    for (let i = 0; i < actions.length; ++i) {
+      const action = actions[i]
+      await fetchJson('/actions', this.props.auth, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(action),
+      })
+      const percentage = Math.ceil(i / actions.length * 100)
+      this.setState({'upstairs.genPercentage': percentage})
+    }
+
+    this.setState({tabIndex: 1})
+    this.getActions()
+
   }
 
   render () {
     const fabStyle = Object.assign({}, this.styles.fab)
     const translateFab = -100 * (this.state.tabIndex - 1)
     fabStyle.transform = `translate(${translateFab}vh, 0px)`
+    const upstairsSteps = Number(this.state['upstairs.stepQty'])
+    let upstairsGenQty = upstairsSteps * 4 - 1
+    if (upstairsGenQty < 0) upstairsGenQty = 0
     return (
       <div>
         <Tabs onChange={this.handleChangeTab} value={this.state.tabIndex}>
@@ -268,15 +363,69 @@ class Actions extends Component {
             <div style={this.styles.row}>
               <GeneratorCard
                 title='Escalera para venta'
-                onTouchTap={this.handleGeneratorStairsUp}
+                subtitle='Generar acciones por pasos para ir moviendo un stop limit mientras el precio sube hasta que la tendencia se revierta'
+                onGenerate={this.handleGenerateUpstairs}
               >
-                Generar acciones por pasos para ir moviendo un stop limit mientras el precio sube hasta que la tendencia se revierta
+                <TextField
+                  floatingLabelText='Primer paso'
+                  name='initialValue'
+                  type='number'
+                  fullWidth={true}
+                  onChange={this.handleUpStairsChange}
+                />
+                <TextField
+                  floatingLabelText='Crear paso cada __ dolares'
+                  name='step'
+                  type='number'
+                  defaultValue={20}
+                  fullWidth={true}
+                  onChange={this.handleUpStairsChange}
+                />
+                <TextField
+                  floatingLabelText='Poner stop limit __ dolares por debajo'
+                  name='stopDistance'
+                  type='number'
+                  defaultValue={60}
+                  fullWidth={true}
+                  onChange={this.handleUpStairsChange}
+                />
+                <TextField
+                  floatingLabelText='Poner limit __ dolares por debajo del stop'
+                  name='limitDelta'
+                  type='number'
+                  defaultValue={2}
+                  fullWidth={true}
+                  onChange={this.handleUpStairsChange}
+                />
+                <TextField
+                  floatingLabelText='Número de pasos a crear'
+                  name='stepQty'
+                  type='number'
+                  defaultValue={20}
+                  fullWidth={true}
+                  onChange={this.handleUpStairsChange}
+                />
+                Se generarán {upstairsGenQty} acciones
+                {this.state['upstairs.genPercentage'] !== null ?
+                  <LinearProgress
+                    mode='determinate'
+                    value={this.state['upstairs.genPercentage']}
+                  />
+                  :
+                  null
+                }
               </GeneratorCard>
-              <GeneratorCard title='Escalera para compra'>
-                Generar acciones por pasos para ir moviendo un stop limit mientras el precio baja hasta que la tendencia se revierta
+              <GeneratorCard
+                title='Escalera para compra'
+                subtitle='Generar acciones por pasos para ir moviendo un stop limit mientras el precio baja hasta que la tendencia se revierta'
+              >
+
               </GeneratorCard>
-              <GeneratorCard title='Stop limit'>
-                Stop limit similar al de Poloniex
+              <GeneratorCard
+                title='Stop limit'
+                subtitle='Stop limit similar al de Poloniex'
+              >
+
               </GeneratorCard>
             </div>
           </div>
