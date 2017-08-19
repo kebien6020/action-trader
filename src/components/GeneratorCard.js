@@ -1,6 +1,7 @@
 import React,  { Component } from 'react'
 import { Card, CardTitle, CardText, CardActions } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
+import LinearProgress from 'material-ui/LinearProgress'
 import ArrowDown from 'material-ui/svg-icons/hardware/keyboard-arrow-down'
 
 const styles = {
@@ -56,6 +57,14 @@ class GeneratorCard extends Component {
           <div>
             <CardText style={styles.content}>
               {this.props.children}
+              {this.props.progress !== null ?
+                <LinearProgress
+                  mode='determinate'
+                  value={this.props.progress}
+                />
+                :
+                null
+              }
             </CardText>
             <CardActions style={{textAlign: 'right'}}>
               <FlatButton label='Cancelar' onTouchTap={this.toggleExpanded} />

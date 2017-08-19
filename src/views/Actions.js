@@ -18,6 +18,7 @@ import TextField from 'material-ui/TextField'
 import LinearProgress from 'material-ui/LinearProgress'
 
 import GeneratorCard from '../components/GeneratorCard'
+import UpstairsGeneratorCard from '../components/UpstairsGeneratorCard'
 import muiThemeable from 'material-ui/styles/muiThemeable'
 import SwipeableViews from 'react-swipeable-views'
 import Portal from 'react-portal-minimal'
@@ -66,12 +67,6 @@ class Actions extends Component {
     tickerConnected: false,
     tickerPrice: null,
     tabIndex: 1,
-    'upstairs.initialValue': null,
-    'upstairs.step': '20',
-    'upstairs.stopDistance': '60',
-    'upstairs.stepQty': '20',
-    'upstairs.limitDelta': '2',
-    'upstairs.genPercentage': null,
     'downstairs.initialValue': null,
     'downstairs.step': '20',
     'downstairs.stopDistance': '60',
@@ -412,9 +407,6 @@ class Actions extends Component {
     const fabStyle = Object.assign({}, this.styles.fab)
     const translateFab = -100 * (this.state.tabIndex - 1)
     fabStyle.transform = `translate(${translateFab}vh, 0px)`
-    const upstairsSteps = Number(this.state['upstairs.stepQty'])
-    let upstairsGenQty = upstairsSteps * 4 - 1
-    if (upstairsGenQty < 0) upstairsGenQty = 0
 
     const downstairsSteps = Number(this.state['downstairs.stepQty'])
     let downstairsGenQty = downstairsSteps * 4 - 1
@@ -428,62 +420,14 @@ class Actions extends Component {
         <SwipeableViews onChangeIndex={this.handleChangeTab} index={this.state.tabIndex}>
           <div className="generators">
             <div style={this.styles.row}>
-              <GeneratorCard
-                title='Escalera para venta'
-                subtitle='Generar acciones por pasos para ir moviendo un stop limit mientras el precio sube hasta que la tendencia se revierta'
-                onGenerate={
-                  () => this.handleGenerateStairs({direction: UPSTAIRS})
-                }
-              >
-                <TextField
-                  floatingLabelText='Primer paso'
-                  name='initialValue'
-                  type='number'
-                  fullWidth={true}
-                  onChange={this.handleUpStairsChange}
-                />
-                <TextField
-                  floatingLabelText='Crear paso cada __ dolares'
-                  name='step'
-                  type='number'
-                  defaultValue={20}
-                  fullWidth={true}
-                  onChange={this.handleUpStairsChange}
-                />
-                <TextField
-                  floatingLabelText='Poner stop limit __ dolares por debajo'
-                  name='stopDistance'
-                  type='number'
-                  defaultValue={60}
-                  fullWidth={true}
-                  onChange={this.handleUpStairsChange}
-                />
-                <TextField
-                  floatingLabelText='Poner limit __ dolares por debajo del stop'
-                  name='limitDelta'
-                  type='number'
-                  defaultValue={2}
-                  fullWidth={true}
-                  onChange={this.handleUpStairsChange}
-                />
-                <TextField
-                  floatingLabelText='Número de pasos a crear'
-                  name='stepQty'
-                  type='number'
-                  defaultValue={20}
-                  fullWidth={true}
-                  onChange={this.handleUpStairsChange}
-                />
-                Se generarán {upstairsGenQty} acciones
-                {this.state['upstairs.genPercentage'] !== null ?
-                  <LinearProgress
-                    mode='determinate'
-                    value={this.state['upstairs.genPercentage']}
-                  />
-                  :
-                  null
-                }
-              </GeneratorCard>
+              <UpstairsGeneratorCard
+                onGenerate={() => {
+                  this.setState({tabIndex: 1})
+                  this.getActions()
+                }}
+                actions={this.state.actions}
+                auth={this.props.auth}
+              />
               <GeneratorCard
                 title='Escalera para compra'
                 subtitle='Generar acciones por pasos para ir moviendo un stop limit mientras el precio baja hasta que la tendencia se revierta'
