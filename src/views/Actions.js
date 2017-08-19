@@ -19,7 +19,7 @@ import GeneratorCard from '../components/GeneratorCard'
 import UpstairsGeneratorCard from '../components/UpstairsGeneratorCard'
 import DownstairsGeneratorCard from '../components/DownstairsGeneratorCard'
 
-import muiThemeable from 'material-ui/styles/muiThemeable'
+import theme from '../theme'
 import SwipeableViews from 'react-swipeable-views'
 import Portal from 'react-portal-minimal'
 import { fetchJson } from '../utils'
@@ -31,6 +31,30 @@ const red = 'red'
 const blue = 'blue'
 const green = 'green'
 const orange = 'orange'
+
+const styles = {
+  fab: {
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    zIndex: 900,
+    flexDirection: 'row',
+    transition: 'transform 0.35s cubic-bezier(0.15, 0.3, 0.25, 1) 0s',
+    direction: 'ltr',
+    display: 'flex',
+  },
+  minibar: {
+    backgroundColor: theme.palette.primary2Color,
+    color: theme.palette.alternateTextColor,
+    paddingLeft: '20px',
+    paddingRight: '20px',
+  },
+  row: {
+    paddingLeft: '16px',
+    paddingRight: '16px',
+    paddingTop: '16px',
+  }
+}
 
 class Actions extends Component {
   static isPrivate = true
@@ -64,30 +88,6 @@ class Actions extends Component {
     tickerConnected: false,
     tickerPrice: null,
     tabIndex: 1,
-  }
-
-  styles = {
-    fab: {
-      position: 'fixed',
-      bottom: '20px',
-      right: '20px',
-      zIndex: 900,
-      flexDirection: 'row',
-      transition: 'transform 0.35s cubic-bezier(0.15, 0.3, 0.25, 1) 0s',
-      direction: 'ltr',
-      display: 'flex',
-    },
-    minibar: {
-      backgroundColor: this.props.muiTheme.palette.primary2Color,
-      color: this.props.muiTheme.palette.alternateTextColor,
-      paddingLeft: '20px',
-      paddingRight: '20px',
-    },
-    row: {
-      paddingLeft: '16px',
-      paddingRight: '16px',
-      paddingTop: '16px',
-    }
   }
 
   ticker = new Ticker('USDT_BTC')
@@ -285,7 +285,7 @@ class Actions extends Component {
   }
 
   render () {
-    const fabStyle = Object.assign({}, this.styles.fab)
+    const fabStyle = Object.assign({}, styles.fab)
     const translateFab = -100 * (this.state.tabIndex - 1)
     fabStyle.transform = `translate(${translateFab}vh, 0px)`
 
@@ -297,7 +297,7 @@ class Actions extends Component {
         </Tabs>
         <SwipeableViews onChangeIndex={this.handleChangeTab} index={this.state.tabIndex}>
           <div className="generators">
-            <div style={this.styles.row}>
+            <div style={styles.row}>
               <UpstairsGeneratorCard
                 onGenerate={this.handleGenerate}
                 actions={this.state.actions} // To avoid name collisions
@@ -318,7 +318,7 @@ class Actions extends Component {
           </div>
           <div className='list'>
             <Paper
-              style={this.styles.minibar}
+              style={styles.minibar}
             >
               {this.state.tickerConnected && this.state.tickerPrice && `Precio BTC: ${this.state.tickerPrice} USD`}
               {this.state.tickerPrice === null ? 'Consultando precio en poloniex...' : null}
@@ -357,4 +357,4 @@ class Actions extends Component {
   }
 }
 
-export default muiThemeable()(Actions)
+export default Actions
