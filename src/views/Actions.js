@@ -31,6 +31,9 @@ const blue = 'blue'
 const green = 'green'
 const orange = 'orange'
 
+const UPSTAIRS = true
+const DOWNSTAIRS = false
+
 class Actions extends Component {
   static isPrivate = true
 
@@ -42,7 +45,14 @@ class Actions extends Component {
       targetOrigin={{horizontal: 'right', vertical: 'top'}}
       anchorOrigin={{horizontal: 'right', vertical: 'top'}}
     >
-      <MenuItem primaryText="Actualizar lista" onTouchTap={() => this.getActions()} />
+      <MenuItem
+        primaryText="Actualizar lista"
+        onTouchTap={() => this.getActions()}
+      />
+      <MenuItem
+        primaryText='Borrar todas las acciones'
+        onTouchTap={() => this.deleteAllActions()}
+      />
     </IconMenu>
   )
 
@@ -62,6 +72,12 @@ class Actions extends Component {
     'upstairs.stepQty': '20',
     'upstairs.limitDelta': '2',
     'upstairs.genPercentage': null,
+    'downstairs.initialValue': null,
+    'downstairs.step': '20',
+    'downstairs.stopDistance': '60',
+    'downstairs.stepQty': '20',
+    'downstairs.limitDelta': '2',
+    'downstairs.genPercentage': null,
   }
 
   styles = {
@@ -263,16 +279,44 @@ class Actions extends Component {
     this.setState({[`upstairs.${name}`]: value})
   }
 
-  handleGenerateUpstairs = async () => {
-    const initialValue = Number(this.state['upstairs.initialValue'])
-    const step = Number(this.state['upstairs.step'])
-    const stopDistance = Number(this.state['upstairs.stopDistance'])
-    const stepQty = Number(this.state['upstairs.stepQty'])
-    const limitDelta = Number(this.state['upstairs.limitDelta'])
+  handleDownStairsChange = event => {
+    const {name, value} = event.target
+    this.setState({[`downstairs.${name}`]: value})
+  }
+
+  handleGenerateStairs = async ({direction = UPSTAIRS}) => {
+    let initialValue
+      , step
+      , stopDistance
+      , stepQty
+      , limitDelta
+      , percentageKey
+      , passCheck
+      , returnCheck
+
+    if (direction === UPSTAIRS) {
+      initialValue = Number(this.state['upstairs.initialValue'])
+      step = Number(this.state['upstairs.step'])
+      stopDistance = Number(this.state['upstairs.stopDistance'])
+      stepQty = Number(this.state['upstairs.stepQty'])
+      limitDelta = Number(this.state['upstairs.limitDelta'])
+      percentageKey = 'upstairs.genPercentage'
+      passCheck = 'gt'
+      returnCheck = 'lt'
+    } else {
+      initialValue = Number(this.state['downstairs.initialValue'])
+      step = -Number(this.state['downstairs.step'])
+      stopDistance = -Number(this.state['downstairs.stopDistance'])
+      stepQty = Number(this.state['downstairs.stepQty'])
+      limitDelta = -Number(this.state['downstairs.limitDelta'])
+      percentageKey = 'downstairs.genPercentage'
+      passCheck = 'lt'
+      returnCheck = 'gt'
+    }
 
     // Settle on an unique prefix
     let prefixIndex = 1
-    const makePrefix = i => `[V${i}]`
+    const makePrefix = i => direction === UPSTAIRS ? `[V${i}]` : `[C${i}]`
     const actionNames = this.state.actions.map(a => a.name)
     const startWithPrefix = name =>
       name.startsWith(makePrefix(prefixIndex))
@@ -293,7 +337,7 @@ class Actions extends Component {
           name: `${prefix} Paso ${i} mover stop`,
           type: 'disable',
           triggerName: `${prefix} Paso ${i - 1} stop`,
-          check: 'gt',
+          check: passCheck,
           value: currentStepValue,
           enabled: true,
         })
@@ -303,7 +347,7 @@ class Actions extends Component {
         name: `${prefix} Paso ${i} stop stop`,
         type: 'enable',
         triggerName: `${prefix} Paso ${i} stop`,
-        check: 'gt',
+        check: passCheck,
         value: currentStepValue,
         enabled: true,
       })
@@ -313,7 +357,7 @@ class Actions extends Component {
         name: `${prefix} Paso ${i} stop`,
         type: 'enable',
         triggerName: `${prefix} Paso ${i} limit`,
-        check: 'lt',
+        check: returnCheck,
         value: currentStopLimit,
         enabled: false,
       })
@@ -337,12 +381,26 @@ class Actions extends Component {
         body: JSON.stringify(action),
       })
       const percentage = Math.ceil(i / actions.length * 100)
-      this.setState({'upstairs.genPercentage': percentage})
+      this.setState({[percentageKey]: percentage})
     }
 
     this.setState({tabIndex: 1})
     this.getActions()
 
+  }
+
+  deleteAllActions = async () => {
+    await this.getActions()
+    const actions = this.state.actions
+
+    const promises = []
+    for (const action of actions)
+      promises.push(fetchJson(`/actions/${action.id}`, this.props.auth, {
+        method: 'delete'
+      }))
+
+    await Promise.all(promises)
+    return this.getActions()
   }
 
   render () {
@@ -352,6 +410,10 @@ class Actions extends Component {
     const upstairsSteps = Number(this.state['upstairs.stepQty'])
     let upstairsGenQty = upstairsSteps * 4 - 1
     if (upstairsGenQty < 0) upstairsGenQty = 0
+
+    const downstairsSteps = Number(this.state['downstairs.stepQty'])
+    let downstairsGenQty = downstairsSteps * 4 - 1
+    if (downstairsGenQty < 0) downstairsGenQty = 0
     return (
       <div>
         <Tabs onChange={this.handleChangeTab} value={this.state.tabIndex}>
@@ -364,7 +426,9 @@ class Actions extends Component {
               <GeneratorCard
                 title='Escalera para venta'
                 subtitle='Generar acciones por pasos para ir moviendo un stop limit mientras el precio sube hasta que la tendencia se revierta'
-                onGenerate={this.handleGenerateUpstairs}
+                onGenerate={
+                  () => this.handleGenerateStairs({direction: UPSTAIRS})
+                }
               >
                 <TextField
                   floatingLabelText='Primer paso'
@@ -418,8 +482,58 @@ class Actions extends Component {
               <GeneratorCard
                 title='Escalera para compra'
                 subtitle='Generar acciones por pasos para ir moviendo un stop limit mientras el precio baja hasta que la tendencia se revierta'
+                onGenerate={
+                  () => this.handleGenerateStairs({direction: DOWNSTAIRS})
+                }
               >
-
+                <TextField
+                  floatingLabelText='Primer paso'
+                  name='initialValue'
+                  type='number'
+                  fullWidth={true}
+                  onChange={this.handleDownStairsChange}
+                />
+                <TextField
+                  floatingLabelText='Crear paso cada __ dolares'
+                  name='step'
+                  type='number'
+                  defaultValue={20}
+                  fullWidth={true}
+                  onChange={this.handleDownStairsChange}
+                />
+                <TextField
+                  floatingLabelText='Poner stop limit __ dolares por encima'
+                  name='stopDistance'
+                  type='number'
+                  defaultValue={60}
+                  fullWidth={true}
+                  onChange={this.handleDownStairsChange}
+                />
+                <TextField
+                  floatingLabelText='Poner limit __ dolares por encima del stop'
+                  name='limitDelta'
+                  type='number'
+                  defaultValue={2}
+                  fullWidth={true}
+                  onChange={this.handleDownStairsChange}
+                />
+                <TextField
+                  floatingLabelText='Número de pasos a crear'
+                  name='stepQty'
+                  type='number'
+                  defaultValue={20}
+                  fullWidth={true}
+                  onChange={this.handleDownStairsChange}
+                />
+                Se generarán {downstairsGenQty} acciones
+                {this.state['downstairs.genPercentage'] !== null ?
+                  <LinearProgress
+                    mode='determinate'
+                    value={this.state['downstairs.genPercentage']}
+                  />
+                  :
+                  null
+                }
               </GeneratorCard>
               <GeneratorCard
                 title='Stop limit'
