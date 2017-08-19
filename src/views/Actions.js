@@ -146,6 +146,8 @@ class Actions extends Component {
   handleSWMessage = event => {
     if (event.data === 'update')
       this.getActions()
+    const audio = new Audio('/notification.mp3')
+    audio.play()
   }
 
   componentWillMount = async () => {
@@ -293,6 +295,7 @@ class Actions extends Component {
       , percentageKey
       , passCheck
       , returnCheck
+      , finalAction
 
     if (direction === UPSTAIRS) {
       initialValue = Number(this.state['upstairs.initialValue'])
@@ -303,6 +306,7 @@ class Actions extends Component {
       percentageKey = 'upstairs.genPercentage'
       passCheck = 'gt'
       returnCheck = 'lt'
+      finalAction = 'sell'
     } else {
       initialValue = Number(this.state['downstairs.initialValue'])
       step = -Number(this.state['downstairs.step'])
@@ -312,6 +316,7 @@ class Actions extends Component {
       percentageKey = 'downstairs.genPercentage'
       passCheck = 'lt'
       returnCheck = 'gt'
+      finalAction = 'buy'
     }
 
     // Settle on an unique prefix
@@ -365,7 +370,7 @@ class Actions extends Component {
       // Limit
       actions.push({
         name: `${prefix} Paso ${i} limit`,
-        type: 'sell',
+        type: finalAction,
         value: currentLimit,
         enabled: false,
       })
