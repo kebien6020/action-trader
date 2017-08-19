@@ -55,7 +55,7 @@ class Actions extends Component {
     refreshStatus: 'hide',
     tickerConnected: false,
     tickerPrice: null,
-    tabIndex: 0,
+    tabIndex: 1,
     'upstairs.initialValue': null,
     'upstairs.step': '20',
     'upstairs.stopDistance': '60',
