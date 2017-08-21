@@ -3,15 +3,17 @@ import auth0 from 'auth0-js'
 const domain = process.env.REACT_APP_AUTH0_DOMAIN
 const clientID = process.env.REACT_APP_AUTH0_CLIENT_ID
 const redirectUri = process.env.REACT_APP_AUTH0_CALLBACK
+const audience = process.env.REACT_APP_AUTH0_AUDIENCE
+const scope = process.env.REACT_APP_AUTH0_SCOPE
 
 export default class Auth {
   auth0 = new auth0.WebAuth({
     domain,
     clientID,
     redirectUri,
-    audience: 'https://action-trader.com',
+    audience,
     responseType: 'token id_token',
-    scope: 'openid read:allactions'
+    scope
   })
 
   login() {
