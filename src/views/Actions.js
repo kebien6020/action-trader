@@ -15,7 +15,7 @@ import RefreshIndicator from 'material-ui/RefreshIndicator'
 import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
 
-import GeneratorCard from '../components/GeneratorCard'
+import StopLimitGeneratorCard from '../components/StopLimitGeneratorCard'
 import UpstairsGeneratorCard from '../components/UpstairsGeneratorCard'
 import DownstairsGeneratorCard from '../components/DownstairsGeneratorCard'
 
@@ -308,12 +308,11 @@ class Actions extends Component {
                 actions={this.state.actions}
                 auth={this.props.auth}
               />
-              <GeneratorCard
-                title='Stop limit'
-                subtitle='Stop limit similar al de Poloniex.'
-              >
-
-              </GeneratorCard>
+              <StopLimitGeneratorCard
+                onGenerate={this.handleGenerate}
+                actions={this.state.actions}
+                auth={this.props.auth}
+              />
             </div>
           </div>
           <div className='list'>

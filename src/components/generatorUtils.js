@@ -37,16 +37,7 @@ export function generateStair(args) {
   const finalAction = up ? 'sell' : 'buy'
 
   // Settle on an unique prefix
-  let prefixIndex = 1
-  const makePrefix = i => up ? `[V${i}]` : `[C${i}]`
-  const actionNames = existingActions.map(a => a.name)
-  const startWithPrefix = name =>
-    name.startsWith(makePrefix(prefixIndex))
-
-  while(actionNames.some(startWithPrefix))
-    ++prefixIndex
-
-  const prefix = makePrefix(prefixIndex)
+  const prefix = definePrefix(up, existingActions)
 
   // Actual generation logic
   const actions = []
@@ -95,6 +86,20 @@ export function generateStair(args) {
   }
 
   return actions
+}
+
+export function definePrefix(sell, existingActions) {
+  // Settle on an unique prefix
+  let prefixIndex = 1
+  const makePrefix = i => sell ? `[V${i}]` : `[C${i}]`
+  const actionNames = existingActions.map(a => a.name)
+  const startWithPrefix = name =>
+    name.startsWith(makePrefix(prefixIndex))
+
+  while(actionNames.some(startWithPrefix))
+    ++prefixIndex
+
+  return makePrefix(prefixIndex)
 }
 
 export function createAction(action, auth) {
