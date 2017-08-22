@@ -7,7 +7,9 @@ const fields = [
   'check',
   'value',
   'triggerName',
-  'enabled'
+  'enabled',
+  'amount',
+  'amountType'
 ]
 
 exports.list = async ((req, res, next) => {

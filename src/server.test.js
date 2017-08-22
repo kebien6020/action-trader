@@ -112,7 +112,9 @@ describe('Actions API', () => {
         name: '2',
         type: 'sell',
         value: 274,
-        enabled: false
+        enabled: false,
+        amount: '0.50',
+        amountType: 'percentage'
       })
     })
 
@@ -137,6 +139,8 @@ describe('Actions API', () => {
       enabled: false,
       check: null,
       triggerName: null,
+      amount: 0.5,
+      amountType: 'percentage',
     }))
     expect(actions[0]).not.toHaveProperty('owner')
     expect(actions[1]).not.toHaveProperty('owner')
@@ -150,6 +154,60 @@ describe('Actions API', () => {
     const {actions: afterSecondDelete} = await request('/actions')
     expect(afterSecondDelete.length).toBe(0)
 
+  })
+
+  it('fails to create a sell action without amount', async () => {
+    const opts = {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: '2',
+        type: 'sell',
+        value: 274,
+        enabled: false,
+      })
+    }
+
+    const { success } = await request('/actions', opts)
+    expect(success).toBe(false)
+  })
+
+  it('requires an amountType along the amount', async () => {
+    const optsWithoutAmountType = {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: '1',
+        type: 'buy',
+        value: 274,
+        enabled: false,
+        amount: '1',
+      })
+    }
+    const optsWithAmountType = {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: '1',
+        type: 'buy',
+        value: 274,
+        enabled: false,
+        amount: '1',
+        amountType: 'percentage',
+      })
+    }
+
+    const { success } = await request('/actions', optsWithoutAmountType)
+    expect(success).toBe(false)
+
+    const { success2 } = await request('/actions', optsWithAmountType)
+    expect(success2).toBe(true)
   })
 })
 

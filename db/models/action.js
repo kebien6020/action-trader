@@ -33,8 +33,32 @@ module.exports = function(sequelize, DataTypes) {
     owner: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    amount: {
+      type: DataTypes.DECIMAL(20, 8),
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        min: 0,
+      }
+    },
+    amountType: {
+      type: DataTypes.ENUM('percentage', 'absolute'),
+      allowNull: true,
+      defaultValue: null,
     }
   }, {
+    validate: {
+      amountAndTypeOrNone() {
+        if ((this.amount === null) !== (this.amountType === null))
+          throw Error('amount and amountType are required to both exist or both not to exist')
+      },
+      buyAndSellRequireAmount() {
+        if (this.type === 'sell' || this.type === 'buy')
+          if (this.amount === null)
+            throw Error('sell and buy actions require an amount')
+      }
+    },
     classMethods: {
       associate: function(models) {
         // associations can be defined here
