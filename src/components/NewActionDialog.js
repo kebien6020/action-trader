@@ -14,6 +14,8 @@ class NewActionDialog extends Component {
     check: 'none',
     value: '',
     triggerName: '',
+    amount: '100',
+    amountType: 'percentage',
     enabled: false
   }
 
@@ -23,6 +25,23 @@ class NewActionDialog extends Component {
 
   handleTextField = (event) => {
     this.handleChange(event.target.name, event.target.value)
+  }
+
+  handleCreate = () => {
+    // Work over clone
+    const action = Object.assign({}, this.state)
+    if (action.check === 'none') action.check = null
+    if (action.triggerName === '') action.triggerName = null
+    // The server expects the percentage as a number from 0 to 1
+    if (action.amountType === 'percentage')
+      action.amount = Number(action.amount) / 100
+
+    if (action.type !== 'sell' || action.type !== 'buy') {
+      action.amount = null
+      action.amountType = null
+    }
+
+    this.props.onCreate(action)
   }
 
   render() {
@@ -35,7 +54,7 @@ class NewActionDialog extends Component {
       <FlatButton
         label='Crear'
         primary={true}
-        onTouchTap={() => this.props.onCreate(this.state)}
+        onTouchTap={this.handleCreate}
       />
     ]
     return (
@@ -90,13 +109,35 @@ class NewActionDialog extends Component {
             <MenuItem value='lt' primaryText='Precio menor que...' />
           </SelectField>
           <TextField
-            floatingLabelText='Valor'
+            floatingLabelText='Precio'
             value={this.state.value}
             onChange={this.handleTextField}
             name='value'
             type='number'
             fullWidth={true}
           />
+          {(this.state.type === 'buy' || this.state.type === 'sell') &&
+            <div style={{display: 'flex'}}>
+              <TextField
+                floatingLabelText='Cantidad'
+                value={this.state.amount}
+                onChange={this.handleTextField}
+                name='amount'
+                type='number'
+                style={{flex: '4'}}
+              />
+              <SelectField
+                floatingLabelText='Unidad'
+                value={this.state.amountType}
+                onChange={(_, __, value) => this.handleChange('amountType', value)}
+                name='amountType'
+                style={{flex: '1'}}
+              >
+                <MenuItem value='percentage' primaryText='%' />
+                <MenuItem value='absolute' primaryText='USD' />
+              </SelectField>
+            </div>
+          }
           <Toggle
             label='Habilitada'
             toggled={this.state.enabled}

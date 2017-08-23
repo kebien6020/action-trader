@@ -246,10 +246,6 @@ class Actions extends Component {
   }
 
   handleNewAction = async (action) => {
-    // Work over clone
-    action = Object.assign({}, action)
-    if (action.check === 'none') action.check = null
-    if (action.triggerName === '') action.triggerName = null
     await fetchJson('/actions', this.props.auth, {
       method: 'post',
       body: JSON.stringify(action),
