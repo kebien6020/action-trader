@@ -162,10 +162,7 @@ module.exports = {
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
-        include: [
-          path.resolve(__dirname, '../node_modules/cbor'),
-          paths.appSrc
-        ],
+        include: paths.appSrc,
         loader: require.resolve('babel-loader'),
         options: {
 
@@ -260,23 +257,23 @@ module.exports = {
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin(env.stringified),
     // Minify the code.
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        // Disabled because of an issue with Uglify breaking seemingly valid code:
-        // https://github.com/facebookincubator/create-react-app/issues/2376
-        // Pending further investigation:
-        // https://github.com/mishoo/UglifyJS2/issues/2011
-        comparisons: false,
-      },
-      output: {
-        comments: false,
-        // Turned on because emoji and regex is not minified properly using default
-        // https://github.com/facebookincubator/create-react-app/issues/2488
-        ascii_only: true,
-      },
-      sourceMap: true,
-    }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: {
+    //     warnings: false,
+    //     // Disabled because of an issue with Uglify breaking seemingly valid code:
+    //     // https://github.com/facebookincubator/create-react-app/issues/2376
+    //     // Pending further investigation:
+    //     // https://github.com/mishoo/UglifyJS2/issues/2011
+    //     comparisons: false,
+    //   },
+    //   output: {
+    //     comments: false,
+    //     // Turned on because emoji and regex is not minified properly using default
+    //     // https://github.com/facebookincubator/create-react-app/issues/2488
+    //     ascii_only: true,
+    //   },
+    //   sourceMap: true,
+    // }),
     // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
     new ExtractTextPlugin({
       filename: cssFilename,
@@ -332,4 +329,17 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
   },
+  externals: {
+    // Ignore autobahn's dependency for cbor, we don't use
+    // that functionality anyway.
+    // It causes trouble while minifying because it's written
+    // in ES6.
+    // If we include it in the rule for babel-loader,
+    // it causes trouble anyway because some of it's files
+    // are wrongly detected as ES6 modules and then crashes
+    // on the module.exports = {/*...*/} line because on ES6
+    // modules you don't and can't use module.exports and
+    // webpack makes it non-writable
+    'cbor': 'undefined'
+  }
 };
