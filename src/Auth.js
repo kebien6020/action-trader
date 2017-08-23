@@ -20,18 +20,36 @@ export default class Auth {
     this.auth0.authorize()
   }
 
-  handleAuthentication = () => {
+  parseHash = () => {
     return new Promise((resolve, reject) => {
       this.auth0.parseHash((err, authResult) => {
-        if (authResult && authResult.accessToken && authResult.idToken) {
-          this.setSession(authResult)
-          resolve()
-        } else if (err) {
+        if (err) {
           console.log(err)
-          reject(err)
+          return reject(err)
         }
+        return resolve(authResult)
       })
     })
+  }
+
+  renewAuth = () => {
+    return new Promise((resolve, reject) =>
+      this.auth0.renewAuth(
+        {usePostMessage: false},
+        (err, authResult) => {
+          if (err) {
+            console.log(err)
+            return reject(err)
+          }
+          return resolve(authResult)
+        }
+      )
+    )
+  }
+
+  handleAuthentication = async() => {
+    const authResult = await this.parseHash()
+    this.saveAuth(authResult)
   }
 
   setSession(authResult) {
@@ -62,5 +80,24 @@ export default class Auth {
       throw new Error('No access token found')
     }
     return accessToken
+  }
+
+  saveAuth(authResult) {
+    if (authResult && authResult.accessToken && authResult.idToken) {
+      this.setSession(authResult)
+    } else {
+      throw Error('Invalid authResult')
+    }
+  }
+
+  renew = async () => {
+    try {
+      this.getAccessToken()
+      const authResult = await this.renewAuth()
+      this.saveAuth(authResult)
+    } catch (err) {
+      // No previous access token: login
+      return this.login()
+    }
   }
 }

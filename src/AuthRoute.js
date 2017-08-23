@@ -15,7 +15,7 @@ const AuthRoute = ({component, sw, ...outerProps}) => {
     return <Route { ...outerProps } render={render} />
   } else {
     // User is not Authenticated and route is not private
-    auth.login()
+    auth.renew()
     return null
   }
 }
