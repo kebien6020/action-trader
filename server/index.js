@@ -2,7 +2,7 @@ require('dotenv').config({path: '.env.local'})
 require('dotenv').config()
 const express = require('express')
 const path = require('path')
-const { Action, Sequelize } = require('../db/models')
+const { Action } = require('../db/models')
 const { async, await } = require('asyncawait')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -17,15 +17,15 @@ const BUILD_FOLDER = path.resolve('./build')
 
 const authCheck = jwt({
   secret: jwks.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: "https://kevinpena.auth0.com/.well-known/jwks.json"
-    }),
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: 'https://kevinpena.auth0.com/.well-known/jwks.json'
+  }),
     // This is the identifier we set when we created the API
-    audience: 'https://action-trader.com',
-    issuer: 'https://kevinpena.auth0.com/',
-    algorithms: ['RS256']
+  audience: 'https://action-trader.com',
+  issuer: 'https://kevinpena.auth0.com/',
+  algorithms: ['RS256']
 })
 
 const app = express()
@@ -98,8 +98,7 @@ ticker.on('ticker', async (({last: currPrice}) => {
     // Execute and remove each one of them
     for (const action of actionsToDo) {
       switch (action.type) {
-      case 'enable':
-      {
+      case 'enable': {
         const target = await (getTarget(action))
         console.log(target)
         if(target) {
@@ -110,8 +109,7 @@ ticker.on('ticker', async (({last: currPrice}) => {
         push(action.owner, `Accion tipo habilitar: ${action.name}`)
         break
       }
-      case 'disable':
-      {
+      case 'disable': {
         const target = await (getTarget(action))
         if(target) {
           target.enabled = false
@@ -120,14 +118,12 @@ ticker.on('ticker', async (({last: currPrice}) => {
         console.log(`Action ${action.name} triggered at ${currPrice}, disabling action ${target.name}`)
         break
       }
-      case 'sell':
-      {
+      case 'sell': {
         console.log('Selling at ' + action.value)
         push(action.owner, `Alerta: Vender a ${action.value}`)
         break
       }
-      case 'buy':
-      {
+      case 'buy': {
         console.log('Buying at ' + action.value)
         push(action.owner, `Alerta: Comprar a ${action.value}`)
         break

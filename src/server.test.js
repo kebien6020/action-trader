@@ -84,7 +84,6 @@ describe('Actions API', () => {
 
     expect(res.success).toBe(true)
     expect(res.action).toBeInstanceOf(Object)
-    const createdId = res.action.id
 
     const res2 = await request('/actions', opts)
 

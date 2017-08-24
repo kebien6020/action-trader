@@ -7,5 +7,7 @@ module.exports = async ((req, res, next) => {
     await (push(userId, 'Notificacion push de prueba'))
 
     res.json({success: true})
-  } catch (err) { next(err) }
+  } catch (err) {
+    next(err)
+  }
 })

@@ -8,7 +8,9 @@ exports.register = async((req, res, next) => {
     // TODO: Verificate subscription as valid
     await (Subscription.create({userId, subscription}))
     res.json({success: true})
-  } catch(err) { next(err) }
+  } catch(err) {
+    next(err)
+  }
 })
 
 exports.unregister = async((req, res, next) => {
@@ -16,7 +18,9 @@ exports.unregister = async((req, res, next) => {
     const userId = req.user.sub
     const rows = await (Subscription.destroy({where: {userId}}))
     res.json({success: true, rows})
-  } catch(err) { next(err) }
+  } catch(err) {
+    next(err)
+  }
 })
 
 exports.isSubscribed = async((req, res, next) => {
@@ -25,5 +29,7 @@ exports.isSubscribed = async((req, res, next) => {
     const count = await (Subscription.count({where: {userId}}))
     const isSubscribed = count > 0
     res.json({success: true, isSubscribed})
-  } catch(err) { next(err) }
+  } catch(err) {
+    next(err)
+  }
 })
