@@ -100,22 +100,25 @@ ticker.on('ticker', async (({last: currPrice}) => {
       switch (action.type) {
       case 'enable': {
         const target = await (getTarget(action))
-        console.log(target)
+        let targetName = 'NOT FOUND'
         if(target) {
           target.enabled = true
+          targetName = target.name
           await (target.save())
         }
-        console.log(`Action ${action.name} triggered at ${currPrice}, enabling action ${target.name}`)
+        console.log(`Action ${action.name} triggered at ${currPrice}, enabling action ${targetName}`)
         push(action.owner, `Accion tipo habilitar: ${action.name}`)
         break
       }
       case 'disable': {
         const target = await (getTarget(action))
+        let targetName = 'NOT FOUND'
         if(target) {
+          targetName = target.name
           target.enabled = false
           await (target.save())
         }
-        console.log(`Action ${action.name} triggered at ${currPrice}, disabling action ${target.name}`)
+        console.log(`Action ${action.name} triggered at ${currPrice}, disabling action ${targetName}`)
         break
       }
       case 'sell': {
