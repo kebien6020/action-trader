@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import GeneratorCard from  './GeneratorCard'
+import AmountField from './AmountField'
 import TextField from 'material-ui/TextField'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
@@ -11,6 +12,8 @@ class StopLimitGeneratorCard extends Component {
     stop: '',
     limit: '',
     type: 'sell',
+    amount: '100',
+    amountType: 'percentage',
   }
 
   handleFieldChange = event => {
@@ -22,9 +25,23 @@ class StopLimitGeneratorCard extends Component {
     this.setState({type})
   }
 
+  handleChange = (name, value) =>
+    this.setState({[name]: value})
+
   handleGenerate = async () => {
     const typeIsSell = this.state.type === 'sell'
     const prefix = definePrefix(typeIsSell, this.props.actions)
+
+    let {
+      amount,
+      amountType,
+    } = this.state
+
+    amount = Number(amount)
+    if (amountType === 'percentage') {
+      // The server expects the amount to be a fraction
+      amount = amount / 100
+    }
 
     const actions = []
     // Stop
@@ -42,6 +59,8 @@ class StopLimitGeneratorCard extends Component {
       type: this.state.type,
       value: this.state.limit,
       enabled: false,
+      amount,
+      amountType,
     })
 
     // Actually create actions on the server
@@ -82,6 +101,12 @@ class StopLimitGeneratorCard extends Component {
           fullWidth={true}
           onChange={this.handleFieldChange}
           value={this.state.limit}
+        />
+        <AmountField
+          amount={this.state.amount}
+          type={this.state.amountType}
+          onAmountChange={this.handleChange}
+          onTypeChange={this.handleChange}
         />
         <SelectField
           floatingLabelText='Tipo'
