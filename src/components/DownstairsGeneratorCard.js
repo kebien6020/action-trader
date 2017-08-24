@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import GeneratorCard from  './GeneratorCard'
+import AmountField from './AmountField'
 import TextField from 'material-ui/TextField'
 import { generateStair, Direction, createAction } from './generatorUtils'
 
@@ -11,6 +12,8 @@ class UpstairsGeneratorCard extends Component {
     stopDistance: 60,
     limitDelta: 2,
     stepQty: 20,
+    amount: '100',
+    amountType: 'percentage',
   }
 
   handleGenerateStairs = async () => {
@@ -23,6 +26,17 @@ class UpstairsGeneratorCard extends Component {
       stepQty,
     } = this.state
 
+    let {
+      amount,
+      amountType,
+    } = this.state
+
+    amount = Number(amount)
+    if (amountType === 'percentage') {
+      // The server expects the amount to be a fraction
+      amount = amount / 100
+    }
+
     const params = {
       direction: Direction.DOWNSTAIRS,
       initialValue,
@@ -30,7 +44,9 @@ class UpstairsGeneratorCard extends Component {
       stopDistance,
       limitDelta,
       stepQty,
-      existingActions: this.props.actions
+      existingActions: this.props.actions,
+      amount,
+      amountType,
     }
     // Generate the stair of actions
     const stair = generateStair(params)
@@ -54,6 +70,9 @@ class UpstairsGeneratorCard extends Component {
     const { name, value } = event.target
     this.setState({[name]: Number(value)})
   }
+
+  handleChange = (name, value) =>
+    this.setState({[name]: value})
 
   render () {
     let genQty = this.state.stepQty * 4 - 1
@@ -97,6 +116,13 @@ class UpstairsGeneratorCard extends Component {
           fullWidth={true}
           onChange={this.handleFieldChange}
           value={this.state.limitDelta}
+        />
+        <AmountField
+          customTitle='Cantidad a comprar'
+          amount={this.state.amount}
+          type={this.state.amountType}
+          onAmountChange={this.handleChange}
+          onTypeChange={this.handleChange}
         />
         <TextField
           floatingLabelText='Número de pasos a crear'

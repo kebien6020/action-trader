@@ -6,7 +6,7 @@ import MenuItem from 'material-ui/MenuItem'
 const AmountField = (props) => (
   <div style={{display: 'flex'}}>
     <TextField
-      floatingLabelText='Cantidad'
+      floatingLabelText={props.customTitle || 'Cantidad'}
       value={props.amount}
       onChange={(event) => props.onAmountChange('amount', event.target.value)}
       name='amount'

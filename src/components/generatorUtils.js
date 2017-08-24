@@ -16,6 +16,8 @@ export function generateStair(args) {
     stepQty,
     limitDelta,
     existingActions,
+    amount,
+    amountType,
   } = args
 
   if (direction !== Direction.UPSTAIRS && direction !== Direction.DOWNSTAIRS)
@@ -82,6 +84,8 @@ export function generateStair(args) {
       type: finalAction,
       value: currentLimit,
       enabled: false,
+      amount,
+      amountType,
     })
   }
 
