@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
@@ -6,6 +7,8 @@ import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import Toggle from 'material-ui/Toggle'
 import muiThemeable from 'material-ui/styles/muiThemeable'
+
+import AmountField from './AmountField'
 
 class NewActionDialog extends Component {
   state = {
@@ -36,11 +39,11 @@ class NewActionDialog extends Component {
     if (action.amountType === 'percentage')
       action.amount = Number(action.amount) / 100
 
-    if (action.type !== 'sell' || action.type !== 'buy') {
+    if (action.type !== 'sell' && action.type !== 'buy') {
       action.amount = null
       action.amountType = null
     }
-
+    
     this.props.onCreate(action)
   }
 
@@ -117,26 +120,12 @@ class NewActionDialog extends Component {
             fullWidth={true}
           />
           {(this.state.type === 'buy' || this.state.type === 'sell') &&
-            <div style={{display: 'flex'}}>
-              <TextField
-                floatingLabelText='Cantidad'
-                value={this.state.amount}
-                onChange={this.handleTextField}
-                name='amount'
-                type='number'
-                style={{flex: '4'}}
-              />
-              <SelectField
-                floatingLabelText='Unidad'
-                value={this.state.amountType}
-                onChange={(_, __, value) => this.handleChange('amountType', value)}
-                name='amountType'
-                style={{flex: '1'}}
-              >
-                <MenuItem value='percentage' primaryText='%' />
-                <MenuItem value='absolute' primaryText='USD' />
-              </SelectField>
-            </div>
+            <AmountField
+              amount={this.state.amount}
+              type={this.state.amountType}
+              onAmountChange={this.handleChange}
+              onTypeChange={this.handleChange}
+            />
           }
           <Toggle
             label='Habilitada'
