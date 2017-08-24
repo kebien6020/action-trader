@@ -20,11 +20,11 @@ const authCheck = jwt({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: 'https://kevinpena.auth0.com/.well-known/jwks.json'
+    jwksUri: process.env.AUTH0_JWKS_URI
   }),
     // This is the identifier we set when we created the API
-  audience: 'https://action-trader.com',
-  issuer: 'https://kevinpena.auth0.com/',
+  audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+  issuer: process.env.AUTH0_ISSUER,
   algorithms: ['RS256']
 })
 
