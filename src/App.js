@@ -7,6 +7,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 // Views
 import Home from './views/Home'
 import Actions from './views/Actions'
+import Config from './views/Config'
 import NotFound from './views/NotFound'
 import AuthCallback from './views/AuthCallback'
 // Other
@@ -41,6 +42,9 @@ class App extends Component {
                 onMount={this.setupAppbar}
               />
               <Route exact path='/actions' component={Actions}
+                onMount={this.setupAppbar}
+              />
+              <Route exact path='/config' component={Config}
                 onMount={this.setupAppbar}
               />
               <Route exact path='/authCallback' component={AuthCallback} />
