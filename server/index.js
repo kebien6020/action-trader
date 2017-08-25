@@ -15,7 +15,7 @@ const Ticker = require('./ticker')
 const push = require('./push')
 
 const PORT = 9000
-const BUILD_FOLDER = path.resolve('./build')
+const BUILD_FOLDER = path.resolve('../build')
 
 const authCheck = jwt({
   secret: jwks.expressJwtSecret({
