@@ -143,10 +143,12 @@ class Actions extends Component {
 
     navigator.serviceWorker.addEventListener('message', this.handleSWMessage)
 
+
     return this.getActions()
   }
 
   componentWillUnmount = () => {
+    this.ticker.stop()
     navigator.serviceWorker.removeEventListener('message', this.handleSWMessage)
   }
 

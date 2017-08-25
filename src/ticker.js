@@ -8,20 +8,21 @@ class Ticker extends EventEmitter {
     super()
     this.currencyPairs = currencyPairs
     this.timeout = timeout
+    this.timer = null
 
     this.start = this.start.bind(this)
     this.tick = this.tick.bind(this)
   }
 
   start() {
-    setTimeout(this.tick, 0)
+    this.timer = setTimeout(this.tick, 0)
   }
 
   tick() {
     poloniex.returnTicker((error, data) => {
       if (error) {
         this.emit('error', error)
-        setTimeout(this.tick, this.timeout)
+        this.timer = setTimeout(this.tick, this.timeout)
         return
       }
 
@@ -33,8 +34,15 @@ class Ticker extends EventEmitter {
         if (this.currencyPairs.indexOf(currencyPair) !== -1)
           this.emit('ticker', currencyPair, tickerData)
 
-      setTimeout(this.tick, this.timeout)
+      this.timer = setTimeout(this.tick, this.timeout)
     })
+  }
+
+  stop() {
+    if (this.timer)
+      clearTimeout(this.timer)
+
+    this.timer = null
   }
 }
 
