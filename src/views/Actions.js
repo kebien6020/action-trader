@@ -85,7 +85,6 @@ class Actions extends Component {
     errorFetching: false,
     errorMsg: null,
     refreshStatus: 'hide',
-    tickerConnected: false,
     tickerPrice: null,
     tabIndex: 1,
   }
@@ -94,9 +93,7 @@ class Actions extends Component {
 
   constructor(props) {
     super(props)
-    this.ticker.on('open', () => this.setState({tickerConnected: true}))
-    this.ticker.on('close', () => this.setState({tickerConnected: false}))
-    this.ticker.on('ticker', ({last}) => this.setState({tickerPrice: last}))
+    this.ticker.on('ticker', (_, {last}) => this.setState({tickerPrice: last}))
   }
 
   getActions = async () => {
@@ -146,11 +143,6 @@ class Actions extends Component {
 
   componentWillUnmount = () => {
     navigator.serviceWorker.removeEventListener('message', this.handleSWMessage)
-    try {
-      this.ticker.close()
-    } catch (err) {
-      // It was already closed, no big deal
-    }
   }
 
   closeDialogs = () => this.setState({showAddDialog: false})
@@ -315,8 +307,10 @@ class Actions extends Component {
             <Paper
               style={styles.minibar}
             >
-              {this.state.tickerConnected && this.state.tickerPrice && `Precio BTC: ${this.state.tickerPrice} USD`}
-              {this.state.tickerPrice === null ? 'Consultando precio en poloniex...' : null}
+              {this.state.tickerPrice
+                ? `Precio BTC: ${this.state.tickerPrice} USD`
+                : 'Consultando precio en poloniex...'
+              }
             </Paper>
             <Portal>
               <FloatingActionButton

@@ -1,4 +1,4 @@
-'use strict';
+
 
 const autoprefixer = require('autoprefixer');
 const path = require('path');
@@ -329,17 +329,4 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
   },
-  externals: {
-    // Ignore autobahn's dependency for cbor, we don't use
-    // that functionality anyway.
-    // It causes trouble while minifying because it's written
-    // in ES6.
-    // If we include it in the rule for babel-loader,
-    // it causes trouble anyway because some of it's files
-    // are wrongly detected as ES6 modules and then crashes
-    // on the module.exports = {/*...*/} line because on ES6
-    // modules you don't and can't use module.exports and
-    // webpack makes it non-writable
-    'cbor': 'undefined'
-  }
 };
