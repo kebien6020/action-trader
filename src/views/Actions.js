@@ -89,11 +89,16 @@ class Actions extends Component {
     tabIndex: 1,
   }
 
-  ticker = new Ticker('USDT_BTC')
+  ticker = new Ticker(['USDT_BTC'], 1000)
 
   constructor(props) {
     super(props)
     this.ticker.on('ticker', (_, {last}) => this.setState({tickerPrice: last}))
+    this.ticker.on('error', () => {
+      // There was some error while fetching the ticker
+      // ignore and wait until next update
+    })
+    this.ticker.start()
   }
 
   getActions = async () => {
