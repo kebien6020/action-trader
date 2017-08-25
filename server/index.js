@@ -59,12 +59,7 @@ const CURRENCY_PAIR = 'USDT_BTC'
 
 let ticker = new Ticker(CURRENCY_PAIR)
 
-ticker.on('open', () => console.log('Connected to poloniex ticker successfully'))
-
-ticker.on('close', () => {
-  console.log('Ticker websocket connection closed')
-  ticker = new Ticker(CURRENCY_PAIR)
-})
+const handleOpen = () => console.log('Connected to poloniex ticker successfully')
 
 // Judge wether an action is due
 const isDue = currPrice => action => {
@@ -87,7 +82,7 @@ const getTarget = ({triggerName, owner}) => {
 
 let lock = false
 
-ticker.on('ticker', async (({last: currPrice}) => {
+const handleTicker = async (({last: currPrice}) => {
   if (lock) return
   lock = true
   try {
@@ -139,4 +134,16 @@ ticker.on('ticker', async (({last: currPrice}) => {
   } finally {
     lock = false
   }
-}))
+})
+
+const handleClose = (err) => {
+  console.log('Ticker websocket connection closed', err)
+  ticker = new Ticker(CURRENCY_PAIR)
+  ticker.once('open', handleOpen)
+  ticker.once('close', handleClose)
+  ticker.on('ticker', handleTicker)
+}
+
+ticker.once('open', handleOpen)
+ticker.once('close', handleClose)
+ticker.on('ticker', handleTicker)

@@ -46,8 +46,8 @@ module.exports = class Ticker extends EventEmitter {
       })
     }
 
-    connection.onclose = () => this.emit('close')
+    connection.onclose = (err) => this.emit('close', err)
 
-    connection.open()
+    // connection.open()
   }
 }
