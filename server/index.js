@@ -44,6 +44,7 @@ app.use('/api/testPush', authCheck, routes.testPush)
 
 // Error handler for authCheck middleware
 app.use((error, req, res, next) => {
+  console.log(error)
   res.json({ success: false, error })
 })
 

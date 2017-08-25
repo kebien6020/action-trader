@@ -18,6 +18,8 @@ module.exports = function jsonErrorHandler(error, req, res, next) {
         message: error.message
       }
 
+    console.log(req.url, error)
+
     res.json({ success: false, error })
   } catch (err) {
     console.log(err)
