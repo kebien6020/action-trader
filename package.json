@@ -61,13 +61,14 @@
     "fs-extra": "3.0.1",
     "jwks-rsa": "^1.2.0",
     "jwt-decode": "^2.2.0",
+    "poloniex.js": "^0.0.7",
     "sequelize": "^4.4.2",
     "sqlite3": "^3.1.9",
     "web-push": "^3.2.2"
   },
   "scripts": {
     "start-js": "node scripts/start.js",
-    "start-server": "nodemon server -w server",
+    "start-server": "cd server && nodemon index.js -w . && cd ..",
     "start": "npm-run-all -p start-js start-server",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",

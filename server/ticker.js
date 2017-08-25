@@ -1,53 +1,41 @@
+const Poloniex = require('poloniex.js')
 const EventEmitter = require('events')
-const autobahn = require('autobahn')
-const wsuri = 'wss://api.poloniex.com'
-const connection = new autobahn.Connection({
-  url: wsuri,
-  realm: 'realm1'
-})
 
-module.exports = class Ticker extends EventEmitter {
-  constructor(currencyPair) {
+const poloniex = new Poloniex()
+
+class Ticker extends EventEmitter {
+  constructor(currencyPairs, timeout) {
     super()
-    this.currencyPair = currencyPair
+    this.currencyPairs = currencyPairs
+    this.timeout = timeout
 
-    // Setup handlers for the connection events
-    connection.onopen = session => {
-      this.emit('open')
+    this.start = this.start.bind(this)
+    this.tick = this.tick.bind(this)
+  }
 
-      session.subscribe('ticker', args => {
-        const [
-          currencyPair,
-          last,
-          lowestAsk,
-          highestBid,
-          percentChange,
-          baseVolume,
-          quoteVolume,
-          isFrozen,
-          last24hrHigh,
-          last24hrLow ] = args
+  start() {
+    setTimeout(this.tick, 0)
+  }
 
-        if (currencyPair !== this.currencyPair)
-          return
+  tick() {
+    poloniex.returnTicker((error, data) => {
+      if (error) {
+        this.emit('error', error)
+        setTimeout(this.tick, this.timeout)
+        return
+      }
 
-        this.emit('ticker', {
-          currencyPair,
-          last,
-          lowestAsk,
-          highestBid,
-          percentChange,
-          baseVolume,
-          quoteVolume,
-          isFrozen,
-          last24hrHigh,
-          last24hrLow
-        })
-      })
-    }
+      const entries = Object
+        .keys(data)
+        .map(key => [key, data[key]])
 
-    connection.onclose = (err) => this.emit('close', err)
+      for (const [currencyPair, tickerData] of entries)
+        if (this.currencyPairs.indexOf(currencyPair) !== -1)
+          this.emit('ticker', currencyPair, tickerData)
 
-    // connection.open()
+      setTimeout(this.tick, this.timeout)
+    })
   }
 }
+
+module.exports = Ticker

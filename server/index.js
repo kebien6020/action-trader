@@ -1,7 +1,9 @@
-require('dotenv').config({path: '.env.local'})
-require('dotenv').config()
-const express = require('express')
 const path = require('path')
+
+require('dotenv').config({path: path.resolve(__dirname, '../.env.local')})
+require('dotenv').config({path: path.resolve(__dirname, '../.env')})
+
+const express = require('express')
 const { Action } = require('../db/models')
 const { async, await } = require('asyncawait')
 const bodyParser = require('body-parser')
@@ -57,9 +59,7 @@ app.listen(PORT, () => console.info(`Server listening on PORT ${PORT}...`))
 
 const CURRENCY_PAIR = 'USDT_BTC'
 
-let ticker = new Ticker(CURRENCY_PAIR)
-
-const handleOpen = () => console.log('Connected to poloniex ticker successfully')
+const ticker = new Ticker([CURRENCY_PAIR], 1000)
 
 // Judge wether an action is due
 const isDue = currPrice => action => {
@@ -82,8 +82,9 @@ const getTarget = ({triggerName, owner}) => {
 
 let lock = false
 
-const handleTicker = async (({last: currPrice}) => {
+const handleTicker = async ((_, {last: currPrice}) => {
   if (lock) return
+  // console.log('Ticker: ' + currPrice)
   lock = true
   try {
     // Get the actions we ought to do and tag them with their index in the array
@@ -136,14 +137,6 @@ const handleTicker = async (({last: currPrice}) => {
   }
 })
 
-const handleClose = (err) => {
-  console.log('Ticker websocket connection closed', err)
-  ticker = new Ticker(CURRENCY_PAIR)
-  ticker.once('open', handleOpen)
-  ticker.once('close', handleClose)
-  ticker.on('ticker', handleTicker)
-}
-
-ticker.once('open', handleOpen)
-ticker.once('close', handleClose)
 ticker.on('ticker', handleTicker)
+ticker.on('error', err => console.log(err))
+ticker.start()
