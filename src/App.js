@@ -39,7 +39,6 @@ class App extends Component {
 
             <Switch>
               <Route exact path='/' component={Home}
-                sw={this.props.sw}
                 onMount={this.setupAppbar}
               />
               <Route exact path='/actions' component={Actions}
