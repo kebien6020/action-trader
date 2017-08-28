@@ -11,6 +11,7 @@ import Config from './views/Config'
 import NotFound from './views/NotFound'
 import AuthCallback from './views/AuthCallback'
 import NotificationsConfig from './views/NotificationsConfig'
+import PoloniexConfig from './views/PoloniexConfig'
 // Other
 import SideNav from './components/SideNav'
 import injectTapEventPlugin from 'react-tap-event-plugin'
@@ -51,6 +52,10 @@ class App extends Component {
               <Route exact path='/config/notifications'
                 sw={this.props.sw}
                 component={NotificationsConfig}
+                onMount={this.setupAppbar}
+              />
+              <Route exact path='/config/poloniex'
+                component={PoloniexConfig}
                 onMount={this.setupAppbar}
               />
               <Route component={NotFound} />
