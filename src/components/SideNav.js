@@ -52,7 +52,7 @@ class SideNav extends Component {
           onRequestChange={open => this.setState({ open })}
         >
           <div style={styles.logoDiv}>
-            <img src='android-chrome-192x192.png' alt='logo' style={styles.logo} />
+            <img src='/android-chrome-192x192.png' alt='logo' style={styles.logo} />
           </div>
           <List>
             {links.map((link, i) => {
