@@ -10,6 +10,7 @@ import Actions from './views/Actions'
 import Config from './views/Config'
 import NotFound from './views/NotFound'
 import AuthCallback from './views/AuthCallback'
+import NotificationsConfig from './views/NotificationsConfig'
 // Other
 import SideNav from './components/SideNav'
 import injectTapEventPlugin from 'react-tap-event-plugin'
@@ -48,6 +49,11 @@ class App extends Component {
                 onMount={this.setupAppbar}
               />
               <Route exact path='/authCallback' component={AuthCallback} />
+              <Route exact path='/config/notifications'
+                sw={this.props.sw}
+                component={NotificationsConfig}
+                onMount={this.setupAppbar}
+              />
               <Route component={NotFound} />
             </Switch>
           </div>
