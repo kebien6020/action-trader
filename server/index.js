@@ -68,9 +68,9 @@ const isDue = currPrice => action => {
   if (action.check)
     switch (action.check) {
     case 'gt':
-      return Number(currPrice) > action.value
+      return Number(currPrice) >= action.value
     case 'lt':
-      return Number(currPrice) < action.value
+      return Number(currPrice) <= action.value
     }
   return true
 }
