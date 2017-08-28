@@ -15,25 +15,25 @@ class Ticker extends EventEmitter {
   }
 
   start() {
-    this.timer = setTimeout(this.tick, 0)
+    this.tick()
   }
 
   tick() {
     poloniex.returnTicker((error, data) => {
       if (error) {
         this.emit('error', error)
-        this.timer = setTimeout(this.tick, this.timeout)
-        return
+      } else {
+        const entries = Object
+          .keys(data)
+          .map(key => [key, data[key]])
+
+        for (const [currencyPair, tickerData] of entries)
+          if (this.currencyPairs.indexOf(currencyPair) !== -1)
+            this.emit('ticker', currencyPair, tickerData)
+
       }
 
-      const entries = Object
-        .keys(data)
-        .map(key => [key, data[key]])
-
-      for (const [currencyPair, tickerData] of entries)
-        if (this.currencyPairs.indexOf(currencyPair) !== -1)
-          this.emit('ticker', currencyPair, tickerData)
-
+      if (this.timer) clearTimeout(this.timer)
       this.timer = setTimeout(this.tick, this.timeout)
     })
   }
