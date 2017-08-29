@@ -5081,8 +5081,8 @@ pluralize@^1.2.1:
   resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-1.2.1.tgz#d1a21483fd22bb41e58a12fa3421823140897c45"
 
 "poloniex.js@https://github.com/kebien6020/poloniex.js.git#isomorphic-fetch":
-  version "0.0.8"
-  resolved "https://github.com/kebien6020/poloniex.js.git#9aec3703e23a3bf17478abe5102064407e68a5d1"
+  version "0.0.9"
+  resolved "https://github.com/kebien6020/poloniex.js.git#cf66f57a823000af50c7a18bc5df9e7b43da7563"
   dependencies:
     isomorphic-fetch "^2.2.1"
     nonce "~1.0.3"
