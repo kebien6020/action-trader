@@ -13,6 +13,7 @@ const jwks = require('jwks-rsa')
 const routes = require('./routes')
 const Ticker = require('./ticker')
 const push = require('./push')
+const poloniex = require('./poloniex')
 
 const PORT = 9000
 const BUILD_FOLDER = path.resolve('../build')
@@ -120,13 +121,31 @@ const handleTicker = async ((_, {last: currPrice}) => {
         break
       }
       case 'sell': {
-        console.log('Selling at ' + action.value)
-        push(action.owner, `Alerta: Vender a ${action.value}`)
+        const balances = await (poloniex.balances(action.owner))
+        const currBTC = Number(balances.BTC)
+        let amount = null
+        const actionAmountBTC = action.amount / action.value
+        if (action.amountType === 'percentage')
+          amount = currBTC * action.amount
+        else
+          // action.amountType === 'absolute'
+          amount = Math.min(currBTC, actionAmountBTC)
+
+        console.log(`Selling ${amount} BTC at ${action.value}`)
+        push(action.owner, `Alerta: Vender ${amount}BTC a ${action.value}USD`)
         break
       }
       case 'buy': {
-        console.log('Buying at ' + action.value)
-        push(action.owner, `Alerta: Comprar a ${action.value}`)
+        const balances = await (poloniex.balances(action.owner))
+        const currUSD = Number(balances.USDT)
+        let amount = null
+        if (action.amountType === 'percentage')
+          amount = currUSD * action.amount
+        else
+          // action.amountType === 'absolute'
+          amount = Math.min(currUSD, action.amount)
+        console.log(`Buying ${amount} USD at ${action.value}`)
+        push(action.owner, `Alerta: Vender ${amount}USD a ${action.value}USD`)
         break
 
       }
