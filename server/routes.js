@@ -3,6 +3,7 @@ const actionHandlers = require('./actions')
 const subscriptionHandlers = require('./subscriptions')
 const jsonErrorHandler = require('./jsonErrors')
 const testPushHandler = require('./testPush')
+const configHandlers = require('./config')
 
 const actions = Router()
 
@@ -30,3 +31,9 @@ const testPush = Router()
 testPush.get('/', testPushHandler)
 testPush.use(jsonErrorHandler)
 exports.testPush = testPush
+
+const config = Router()
+config.get('/poloniex', configHandlers.getPoloniex)
+config.put('/poloniex', configHandlers.updatePoloniex)
+config.use(jsonErrorHandler)
+exports.config = config

@@ -41,6 +41,7 @@ app.use(express.static(BUILD_FOLDER))
 app.use('/api/actions', authCheck, routes.actions)
 app.use('/api/subscriptions', authCheck, routes.subscriptions)
 app.use('/api/testPush', authCheck, routes.testPush)
+app.use('/api/config', authCheck, routes.config)
 
 // Error handler for authCheck middleware
 app.use((error, req, res, next) => {
