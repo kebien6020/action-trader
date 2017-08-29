@@ -9,6 +9,7 @@ import Checkbox from 'material-ui/Checkbox'
 import KeyIcon from 'material-ui/svg-icons/communication/vpn-key'
 
 import theme from '../theme'
+import { fetchJson } from '../utils'
 
 const styles = {
   checkbox: {
@@ -32,10 +33,21 @@ class PoloniexConfig extends Component {
     saveDisabled: false,
   }
 
-  componentWillMount() {
+  componentWillMount = async () => {
     this.props.onMount({menu: null})
-    // TODO: Download current apiKey and secret
-    //       from the server on mount
+
+    // Get previous values from the server
+    try {
+      const data = await fetchJson('/config/poloniex', this.props.auth)
+      if (data.success) {
+        this.setState({
+          apiKey: data.poloniexApiKey,
+          secret: data.poloniexSecret,
+        })
+      }
+    } catch (err) {
+      // Just use the default values (ie. empty strings)
+    }
   }
 
   toggleDialog = () =>
@@ -49,13 +61,25 @@ class PoloniexConfig extends Component {
     this.setState({[name]: newText})
   }
 
-  handleSave = () => {
+  handleSave = async () => {
     // Disable the button so that this doesn't fire multiple times
     this.setState({saveDisabled: true})
     // Get the values we are going to save
-    // const { apiKey, apiSecret } = this.state
+    const { apiKey, secret } = this.state
 
-    // TODO: Actually save the data to the server
+    // Actually save the data to the server
+    await fetchJson('/config/poloniex', this.props.auth, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        poloniexApiKey: apiKey,
+        poloniexSecret: secret,
+      })
+    })
+
+    // TODO: Show error dialog on unsuccessful save
 
     // Restore the save button and close the dialog
     this.setState({
