@@ -131,8 +131,14 @@ const handleTicker = async ((_, {last: currPrice}) => {
           // action.amountType === 'absolute'
           amount = Math.min(currBTC, actionAmountBTC)
 
-        console.log(`Selling ${amount} BTC at ${action.value}`)
-        push(action.owner, `Alerta: Vender ${amount}BTC a ${action.value}USD`)
+        try {
+          await (poloniex.sell(action.owner, 'USDT', 'BTC', action.value, amount))
+          console.log(`Selling ${amount} BTC at ${action.value}`)
+          push(action.owner, `Alerta: Vender ${amount}BTC a ${action.value}USD`)
+        } catch (err) {
+          console.log(err)
+          push(action.owner, `Error al colocar orden de venta ${err}`)
+        }
         break
       }
       case 'buy': {
@@ -144,8 +150,16 @@ const handleTicker = async ((_, {last: currPrice}) => {
         else
           // action.amountType === 'absolute'
           amount = Math.min(currUSD, action.amount)
-        console.log(`Buying ${amount} USD at ${action.value}`)
-        push(action.owner, `Alerta: Vender ${amount}USD a ${action.value}USD`)
+
+        const amountBTC = amount / action.value
+        try {
+          await (poloniex.buy(action.owner, 'USDT', 'BTC', action.value, amountBTC))
+          console.log(`Buying ${amount} USD at ${action.value}`)
+          push(action.owner, `Comprando ${amount}USD a ${action.value}USD`)
+        } catch (err) {
+          console.log(err)
+          push(action.owner, `Error al colocar orden de compra ${err}`)
+        }
         break
 
       }
