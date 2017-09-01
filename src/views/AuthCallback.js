@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import CircularProgress from 'material-ui/CircularProgress'
+import Layout from '../components/Layout'
 
 class AuthCallback extends Component {
   constructor(props) {
@@ -19,10 +20,12 @@ class AuthCallback extends Component {
     }
 
     return (
-      <div style={style}>
-        <div style={{marginBottom: '16px'}}><CircularProgress /></div>
-        <div>Iniciando sesión...</div>
-      </div>
+      <Layout>
+        <div style={style}>
+          <div style={{marginBottom: '16px'}}><CircularProgress /></div>
+          <div>Iniciando sesión...</div>
+        </div>
+      </Layout>
     );
   }
 }

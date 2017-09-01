@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
 import RaisedButton from 'material-ui/RaisedButton'
+import Layout from '../components/Layout'
 
 class Home extends Component {
   static isPrivate = true
-
-  componentWillMount() {
-    this.props.onMount({menu: null})
-  }
 
   handleLogout = () => {
     this.props.auth.logout()
@@ -15,7 +12,7 @@ class Home extends Component {
 
   render () {
     return (
-      <div>
+      <Layout>
         <h1>Action Trader</h1>
         <main>
           <p>Eventos recientes o algo asi iria aqui</p>
@@ -25,7 +22,7 @@ class Home extends Component {
             onClick={this.handleLogout}
           />
         </main>
-      </div>
+      </Layout>
     )
   }
 }

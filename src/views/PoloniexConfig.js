@@ -8,6 +8,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import Checkbox from 'material-ui/Checkbox'
 import KeyIcon from 'material-ui/svg-icons/communication/vpn-key'
 
+import Layout from '../components/Layout'
 import theme from '../theme'
 import { fetchJson } from '../utils'
 
@@ -133,7 +134,7 @@ class PoloniexConfig extends Component {
 
   render() {
     return (
-      <div>
+      <Layout title='Poloniex' goBackTo='/config'>
         <List>
           <ListItem
             primaryText='Registrar clave de API'
@@ -144,7 +145,7 @@ class PoloniexConfig extends Component {
           />
         </List>
         {this.renderDialog()}
-      </div>
+      </Layout>
     )
   }
 }

@@ -15,6 +15,7 @@ import RefreshIndicator from 'material-ui/RefreshIndicator'
 import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
 
+import Layout from '../components/Layout'
 import StopLimitGeneratorCard from '../components/StopLimitGeneratorCard'
 import UpstairsGeneratorCard from '../components/UpstairsGeneratorCard'
 import DownstairsGeneratorCard from '../components/DownstairsGeneratorCard'
@@ -139,8 +140,6 @@ class Actions extends Component {
   }
 
   componentWillMount = async () => {
-    this.props.onMount({menu: this.menu})
-
     navigator.serviceWorker.addEventListener('message', this.handleSWMessage)
 
 
@@ -285,7 +284,7 @@ class Actions extends Component {
     fabStyle.transform = `translate(${translateFab}vh, 0px)`
 
     return (
-      <div>
+      <Layout title='Acciones' menu={this.menu}>
         <Tabs onChange={this.handleChangeTab} value={this.state.tabIndex}>
           <Tab label='Generadores' value={0} />
           <Tab label='Lista' value={1} />
@@ -348,7 +347,7 @@ class Actions extends Component {
             />
           </div>
         </SwipeableViews>
-      </div>
+      </Layout>
     )
   }
 }

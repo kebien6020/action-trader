@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { List, ListItem } from 'material-ui/List'
 import Toggle from 'material-ui/Toggle'
 
+import Layout from '../components/Layout'
 import { urlBase64ToUint8Array, fetchJson } from '../utils'
 
 const Status = {
@@ -119,23 +120,25 @@ class NotificationsConfig extends Component {
       this.state.permissionStatus === Status.DISABLED ||
       this.state.permissionStatus === Status.BLOCKED
     return (
-      <List>
-        <ListItem
-          primaryText='Activar notificaciones'
-          rightToggle={
-            <Toggle
-              onToggle={this.handleToggle}
-              toggled={toggled}
-              disabled={disabled}
-            />
-          }
-        />
-        <ListItem
-          primaryText='Probar notificaciones'
-          secondaryText='Enviar una notificación de prueba'
-          onClick={this.testPush}
-        />
-      </List>
+      <Layout title='Notificaciones' goBackTo='/config'>
+        <List>
+          <ListItem
+            primaryText='Activar notificaciones'
+            rightToggle={
+              <Toggle
+                onToggle={this.handleToggle}
+                toggled={toggled}
+                disabled={disabled}
+              />
+            }
+          />
+          <ListItem
+            primaryText='Probar notificaciones'
+            secondaryText='Enviar una notificación de prueba'
+            onClick={this.testPush}
+          />
+        </List>
+      </Layout>
     )
   }
 }

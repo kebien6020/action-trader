@@ -1,8 +1,15 @@
 import React, { Component } from 'react'
+import { Redirect } from 'react-router-dom'
+
 import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
-import SideBarItem from './SideBarItem'
 import { List } from 'material-ui/List'
+import IconButton from 'material-ui/IconButton'
+import MenuIcon from 'material-ui/svg-icons/navigation/menu'
+import BackIcon from 'material-ui/svg-icons/navigation/arrow-back'
+
+
+import SideBarItem from './SideBarItem'
 import theme from '../theme'
 
 /*
@@ -31,17 +38,30 @@ const styles = {
 }
 
 class SideNav extends Component {
-  state = { open: false }
+  state = {
+    open: false,
+    redirect: false,
+  }
 
+  handleOpen = () => this.setState({ open: true })
   handleClose = () => this.setState({ open: false })
 
   render () {
+    const leftIcon = this.props.goBackTo === null
+      ? <IconButton><MenuIcon onTouchTap={this.handleOpen} /></IconButton>
+      :
+       <IconButton onTouchTap={() => this.setState({redirect: true})}>
+         <BackIcon />
+         {this.state.redirect &&
+           <Redirect to={this.props.goBackTo} />
+         }
+        </IconButton>
     return (
+
       <div>
         <AppBar
-          title='Action Trader'
-          onLeftIconButtonTouchTap={() =>
-            this.setState({ open: !this.state.open })}
+          title={this.props.title}
+          iconElementLeft={leftIcon}
           iconElementRight={this.props.menu}
           className='appbar'
         />

@@ -13,7 +13,6 @@ import AuthCallback from './views/AuthCallback'
 import NotificationsConfig from './views/NotificationsConfig'
 import PoloniexConfig from './views/PoloniexConfig'
 // Other
-import SideNav from './components/SideNav'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import theme from './theme'
 
@@ -22,45 +21,24 @@ import './App.css'
 injectTapEventPlugin()
 
 class App extends Component {
-  state = {
-    appbarMenu: null
-  }
-
-  setupAppbar = ({menu}) => {
-    if (menu !== undefined)
-      this.setState({appbarMenu: menu})
-  }
-
   render() {
     return (
       <BrowserRouter>
         <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-          <div>
-            <SideNav menu={this.state.appbarMenu} />
-
-            <Switch>
-              <Route exact path='/' component={Home}
-                onMount={this.setupAppbar}
-              />
-              <Route exact path='/actions' component={Actions}
-                onMount={this.setupAppbar}
-              />
-              <Route exact path='/config' component={Config}
-                onMount={this.setupAppbar}
-              />
-              <Route exact path='/authCallback' component={AuthCallback} />
-              <Route exact path='/config/notifications'
-                sw={this.props.sw}
-                component={NotificationsConfig}
-                onMount={this.setupAppbar}
-              />
-              <Route exact path='/config/poloniex'
-                component={PoloniexConfig}
-                onMount={this.setupAppbar}
-              />
-              <Route component={NotFound} />
-            </Switch>
-          </div>
+          <Switch>
+            <Route exact path='/' component={Home} />
+            <Route exact path='/actions' component={Actions} />
+            <Route exact path='/config' component={Config} />
+            <Route exact path='/authCallback' component={AuthCallback} />
+            <Route exact path='/config/notifications'
+              sw={this.props.sw}
+              component={NotificationsConfig}
+            />
+            <Route exact path='/config/poloniex'
+              component={PoloniexConfig}
+            />
+            <Route component={NotFound} />
+          </Switch>
         </MuiThemeProvider>
       </BrowserRouter>
     );
