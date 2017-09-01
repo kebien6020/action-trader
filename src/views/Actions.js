@@ -158,9 +158,15 @@ class Actions extends Component {
   genCondText = action => {
     if (!action.check) return ''
     if (action.check === 'gt')
-      return ' cuando el precio sea mayor que ' + action.value
+      return ' si el precio supera ' + action.value
     if (action.check === 'lt')
-      return ' cuando el precio sea menor que ' + action.value
+      return ' si el precio baja de ' + action.value
+  }
+
+  genAmountText = action => {
+    if (action.amountType === 'percentage')
+      return (action.amount * 100) + '%'
+    return action.amount + ' USD'
   }
 
   genActionText = action => {
@@ -168,13 +174,15 @@ class Actions extends Component {
 
     switch (action.type) {
     case 'enable':
-      return `Habilitar acción ${triggers}` + this.genCondText(action)
+      return `Habilitar ${triggers}` + this.genCondText(action)
     case 'disable':
-      return `Deshabilitar acción ${triggers}` + this.genCondText(action)
+      return `Deshabilitar ${triggers}` + this.genCondText(action)
     case 'sell':
-      return `Vender a ${action.value}` + this.genCondText(action)
+      return `Vender ${this.genAmountText(action)} a ${action.value}`
+        + this.genCondText(action)
     case 'buy':
-      return `Comprar a ${action.value}` + this.genCondText(action)
+      return `Comprar ${this.genAmountText(action)} a ${action.value}`
+        + this.genCondText(action)
     default:
       return `Acción inválida`
     }
