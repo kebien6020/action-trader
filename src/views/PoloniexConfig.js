@@ -35,8 +35,6 @@ class PoloniexConfig extends Component {
   }
 
   componentWillMount = async () => {
-    this.props.onMount({menu: null})
-
     // Get previous values from the server
     try {
       const data = await fetchJson('/config/poloniex', this.props.auth)

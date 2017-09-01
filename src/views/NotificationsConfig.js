@@ -24,7 +24,6 @@ class NotificationsConfig extends Component {
   subscribed = null
 
   componentWillMount() {
-    this.props.onMount({menu: null})
     this.updatePermission()
   }
 
