@@ -25,6 +25,7 @@ const styles = {
 }
 
 class PoloniexConfig extends Component {
+  static isPrivate = true
 
   state = {
     dialogOpen: false,

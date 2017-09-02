@@ -16,6 +16,7 @@ const Status = {
 const SUBSCRIBE_PUBLIC_KEY = process.env.REACT_APP_SUBSCRIBE_PUBLIC_KEY
 
 class NotificationsConfig extends Component {
+  static isPrivate = true
 
   state = {
     permissionStatus: Status.DISABLED
