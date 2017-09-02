@@ -12,7 +12,6 @@ import MenuItem from 'material-ui/MenuItem'
 import IconButton from 'material-ui/IconButton'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import RefreshIndicator from 'material-ui/RefreshIndicator'
-import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
 
 import Layout from '../components/Layout'
@@ -20,11 +19,9 @@ import StopLimitGeneratorCard from '../components/StopLimitGeneratorCard'
 import UpstairsGeneratorCard from '../components/UpstairsGeneratorCard'
 import DownstairsGeneratorCard from '../components/DownstairsGeneratorCard'
 
-import theme from '../theme'
 import SwipeableViews from 'react-swipeable-views'
 import Portal from 'react-portal-minimal'
 import { fetchJson } from '../utils'
-import Ticker from '../ticker'
 
 
 const gray = 'rgba(0, 0, 0, 0.6)'
@@ -43,12 +40,6 @@ const styles = {
     transition: 'transform 0.35s cubic-bezier(0.15, 0.3, 0.25, 1) 0s',
     direction: 'ltr',
     display: 'flex',
-  },
-  minibar: {
-    backgroundColor: theme.palette.primary2Color,
-    color: theme.palette.alternateTextColor,
-    paddingLeft: '20px',
-    paddingRight: '20px',
   },
   row: {
     paddingLeft: '16px',
@@ -88,18 +79,6 @@ class Actions extends Component {
     refreshStatus: 'hide',
     tickerPrice: null,
     tabIndex: 1,
-  }
-
-  ticker = new Ticker(['USDT_BTC'], 1000)
-
-  constructor(props) {
-    super(props)
-    this.ticker.on('ticker', (_, {last}) => this.setState({tickerPrice: last}))
-    this.ticker.on('error', () => {
-      // There was some error while fetching the ticker
-      // ignore and wait until next update
-    })
-    this.ticker.start()
   }
 
   getActions = async () => {
@@ -147,7 +126,6 @@ class Actions extends Component {
   }
 
   componentWillUnmount = () => {
-    this.ticker.stop()
     navigator.serviceWorker.removeEventListener('message', this.handleSWMessage)
   }
 
@@ -318,14 +296,6 @@ class Actions extends Component {
             </div>
           </div>
           <div className='list'>
-            <Paper
-              style={styles.minibar}
-            >
-              {this.state.tickerPrice
-                ? `Precio BTC: ${this.state.tickerPrice} USD`
-                : 'Consultando precio en poloniex...'
-              }
-            </Paper>
             <Portal>
               <FloatingActionButton
                 style={fabStyle}
