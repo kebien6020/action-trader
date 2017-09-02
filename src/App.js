@@ -5,7 +5,7 @@ import Route from './AuthRoute'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 // Views
-import Home from './views/Home'
+// import Home from './views/Home'
 import Actions from './views/Actions'
 import Config from './views/Config'
 import NotFound from './views/NotFound'
@@ -26,7 +26,7 @@ class App extends Component {
       <BrowserRouter>
         <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
           <Switch>
-            <Route exact path='/' component={Home} />
+            <Route exact path='/' component={Actions} />
             <Route exact path='/actions' component={Actions} />
             <Route exact path='/config' component={Config} />
             <Route exact path='/authCallback' component={AuthCallback} />

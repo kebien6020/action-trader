@@ -20,8 +20,8 @@ import theme from '../theme'
 */
 
 const links = [
-  { isExact: true, linkTo: '/', text: 'Home' },
-  { isExact: false, linkTo: '/actions', text: 'Acciones' },
+  // { isExact: true, linkTo: '/', text: 'Home' },
+  { isExact: true, linkTo: '/', text: 'Acciones' },
   { isExact: true, linkTo: '/config', text: 'Configuración' },
 ]
 
