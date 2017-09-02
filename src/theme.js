@@ -6,9 +6,9 @@ import {fade} from 'material-ui/utils/colorManipulator'
 
 const theme = {
   palette: {
-    primary1Color: '#37474f', // blueGrey800
+    primary1Color: '#102027',
     primary2Color: '#62727b',
-    primary3Color: '#102027',
+    primary3Color: grey300,
     accent1Color: '#3d5afe', // indigoA400
     accent2Color: '#8187ff',
     accent3Color: '#0031ca',
@@ -22,6 +22,11 @@ const theme = {
     clockCircleColor: fade(darkBlack, 0.07),
     shadowColor: fullBlack,
   },
+  toggle: {
+    thumbOnColor: '#3d5afe',
+    trackOnColor: '#8187ff',
+    thumbOffColor: '#9e9e9e',
+  }
 }
 
 export default theme

@@ -43,7 +43,7 @@ class NewActionDialog extends Component {
       action.amount = null
       action.amountType = null
     }
-    
+
     this.props.onCreate(action)
   }
 
@@ -131,10 +131,10 @@ class NewActionDialog extends Component {
             label='Habilitada'
             toggled={this.state.enabled}
             labelStyle={{width: 'auto'}}
-            trackStyle={{backgroundColor: this.props.muiTheme.palette.disabledColor}}
-            thumbStyle={{backgroundColor: this.props.muiTheme.palette.primary2Color}}
-            trackSwitchedStyle={{backgroundColor: this.props.muiTheme.palette.accent1Color}}
-            thumbSwitchedStyle={{backgroundColor: this.props.muiTheme.palette.primary1Color}}
+            // trackStyle={{backgroundColor: this.props.muiTheme.palette.disabledColor}}
+            // thumbStyle={{backgroundColor: this.props.muiTheme.palette.primary2Color}}
+            // trackSwitchedStyle={{backgroundColor: this.props.muiTheme.palette.accent1Color}}
+            // thumbSwitchedStyle={{backgroundColor: this.props.muiTheme.palette.primary1Color}}
             onToggle={(_, checked) => this.setState({enabled: checked})}
           />
       </Dialog>
