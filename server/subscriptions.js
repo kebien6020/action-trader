@@ -5,7 +5,21 @@ exports.register = async((req, res, next) => {
   try {
     const userId = req.user.sub
     const { subscription } = req.body
-    // TODO: Verificate subscription as valid
+
+    // Verify subscription as valid JSON with endpoint
+    // property
+    let isValid = true
+    try {
+      isValid = JSON.parse(subscription).hasOwnProperty('endpoint')
+    } catch (err) {
+      isValid = false
+    }
+    if (!isValid)
+      throw Error(
+        'The subscription is not a valid JSON object ' +
+        'with an endpoint property.'
+      )
+    
     await (Subscription.create({userId, subscription}))
     res.json({success: true})
   } catch(err) {
