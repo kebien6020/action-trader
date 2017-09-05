@@ -16,8 +16,18 @@ exports.register = async((req, res, next) => {
 exports.unregister = async((req, res, next) => {
   try {
     const userId = req.user.sub
-    const rows = await (Subscription.destroy({where: {userId}}))
-    res.json({success: true, rows})
+    const userEndpoint = req.body.endpoint
+    const subscriptions = await (Subscription.findAll({where: {userId}}))
+
+    const rowToEndpoint = row =>
+      JSON.parse(row.subscription).endpoint
+    const toDestroy = subscriptions.filter(sub =>
+      rowToEndpoint(sub) === userEndpoint
+    )
+    const destroyPromises = toDestroy.map(sub => sub.destroy())
+    await (Promise.all(destroyPromises))
+
+    res.json({success: true, alteredRows: toDestroy.length})
   } catch(err) {
     next(err)
   }
@@ -26,8 +36,15 @@ exports.unregister = async((req, res, next) => {
 exports.isSubscribed = async((req, res, next) => {
   try {
     const userId = req.user.sub
-    const count = await (Subscription.count({where: {userId}}))
-    const isSubscribed = count > 0
+    const userEndpoint = req.query.endpoint
+    const rows = await (Subscription.findAll({where: {userId}}))
+
+    // Here we assume the subscriptions in the database are valid JSON
+    const rowToEndpoint = row =>
+      JSON.parse(row.subscription).endpoint
+
+    const savedEndpoints = rows.map(rowToEndpoint)
+    const isSubscribed = savedEndpoints.some(se => se === userEndpoint)
     res.json({success: true, isSubscribed})
   } catch(err) {
     next(err)

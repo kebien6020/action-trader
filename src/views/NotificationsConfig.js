@@ -56,13 +56,22 @@ class NotificationsConfig extends Component {
     this.setState({permissionStatus: Status.ENABLED})
   }
 
+  getSubscriptionEndpoint = async () => {
+    const registration = this.props.sw
+    const subscription = await registration.pushManager.getSubscription()
+    return subscription ? subscription.endpoint : ''
+  }
+
   isSubscribed = async () => {
-    // TODO: Check if the subscription is actually for this browser
     if (this.subscribed !== null)
       return this.subscribed
 
+    const endpoint = await this.getSubscriptionEndpoint()
+    const params = '?endpoint=' + encodeURIComponent(endpoint)
+    const url = '/subscriptions/isSubscribed' + params
+
     const { isSubscribed } =
-      await fetchJson('/subscriptions/isSubscribed', this.props.auth)
+      await fetchJson(url, this.props.auth)
 
     this.subscribed = isSubscribed
     return this.subscribed
@@ -102,10 +111,16 @@ class NotificationsConfig extends Component {
         this.setState({permissionStatus: Status.SUBSCRIBED})
     } else {
       // We want to unsubscribe
-      const { success } = await fetchJson('/subscriptions/unregister', this.props.auth, {
+      const endpoint = await this.getSubscriptionEndpoint()
+      const url = '/subscriptions/unregister'
+      const { success, alteredRows } = await fetchJson(url, this.props.auth, {
         method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({endpoint}),
       })
-      if (success)
+      if (success && alteredRows > 0)
         this.setState({permissionStatus: Status.ENABLED})
     }
   }
