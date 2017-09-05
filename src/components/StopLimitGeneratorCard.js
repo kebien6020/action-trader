@@ -49,7 +49,7 @@ class StopLimitGeneratorCard extends Component {
       name: `${prefix} Stop`,
       type: 'enable',
       triggerName: `${prefix} Limit`,
-      check: typeIsSell ? 'lt' : 'gt',
+      check: typeIsSell ? 'gt' : 'lt',
       value: this.state.stop,
       enabled: true,
     })
