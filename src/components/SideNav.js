@@ -48,7 +48,7 @@ class SideNav extends Component {
 
   render () {
     const leftIcon = this.props.goBackTo === null
-      ? <IconButton><MenuIcon onTouchTap={this.handleOpen} /></IconButton>
+      ? <IconButton><MenuIcon /></IconButton>
       :
        <IconButton onTouchTap={() => this.setState({redirect: true})}>
          <BackIcon />
@@ -56,12 +56,16 @@ class SideNav extends Component {
            <Redirect to={this.props.goBackTo} />
          }
         </IconButton>
+    const onLeftTap = this.props.goBackTo === null
+      ? this.handleOpen
+      : () => {}
     return (
 
       <div>
         <AppBar
           title={this.props.title}
           iconElementLeft={leftIcon}
+          onLeftIconButtonTouchTap={onLeftTap}
           iconElementRight={this.props.menu}
           className='appbar'
         />
