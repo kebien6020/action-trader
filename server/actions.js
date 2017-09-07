@@ -1,5 +1,5 @@
 const { Action } = require('../db/models')
-const { async, await } = require('asyncawait')
+const { async: _async, await: _await } = require('asyncawait')
 
 const fields = [
   'name',
@@ -12,10 +12,10 @@ const fields = [
   'amountType'
 ]
 
-exports.list = async ((req, res, next) => {
+exports.list = _async ((req, res, next) => {
   try {
     const owner = req.user.sub
-    const actions = await (Action.findAll({
+    const actions = _await (Action.findAll({
       where: {owner},
       attributes: {
         exclude: ['owner']
@@ -27,11 +27,11 @@ exports.list = async ((req, res, next) => {
   }
 })
 
-exports.detail = async ((req, res, next) => {
+exports.detail = _async ((req, res, next) => {
   try {
     const actionId = req.params.id
     const owner = req.user.sub
-    const action = await (Action.findById(actionId, {
+    const action = _await (Action.findById(actionId, {
       where: {owner}
     }))
     if (action === null)
@@ -42,39 +42,39 @@ exports.detail = async ((req, res, next) => {
   }
 })
 
-exports.update = async ((req, res, next) => {
+exports.update = _async ((req, res, next) => {
   try {
     const actionId = req.params.id
-    const action = await (Action.findById(actionId))
+    const action = _await (Action.findById(actionId))
     if (!action.owner === req.user.sub)
       throw Error('not authorized')
-    await (action.update(req.body, {fields}))
+    _await (action.update(req.body, {fields}))
     res.json({success: true, action})
   } catch (err) {
     next(err)
   }
 })
 
-exports.create = async ((req, res, next) => {
+exports.create = _async ((req, res, next) => {
   try {
     req.body.owner = req.user.sub
-    const action = await (Action.create(req.body, {fields: fields.concat('owner')}))
+    const action = _await (Action.create(req.body, {fields: fields.concat('owner')}))
     res.json({success: true, action})
   } catch (err) {
     next(err)
   }
 })
 
-exports.delete = async ((req, res, next) => {
+exports.delete = _async ((req, res, next) => {
   try {
     const actionId = req.params.id
     const owner = req.user.sub
-    const action = await (Action.findById(actionId, {
+    const action = _await (Action.findById(actionId, {
       where: {owner}
     }))
     if (action === null)
       throw Error('not found')
-    await (action.destroy())
+    _await (action.destroy())
     res.json({success: true})
   } catch (err) {
     next(err)

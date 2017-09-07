@@ -1,10 +1,10 @@
 const push = require('./push')
-const { async, await } = require('asyncawait')
+const { async: _async, await: _await } = require('asyncawait')
 
-module.exports = async ((req, res, next) => {
+module.exports = _async ((req, res, next) => {
   try {
     const userId = req.user.sub
-    await (push(userId, 'Notificacion push de prueba'))
+    _await (push(userId, 'Notificacion push de prueba'))
 
     res.json({success: true})
   } catch (err) {

@@ -1,4 +1,4 @@
-const { async, await } = require('asyncawait')
+const { async: _async, await: _await } = require('asyncawait')
 const { Subscription } = require('../db/models')
 const webpush = require('web-push')
 
@@ -13,8 +13,8 @@ webpush.setVapidDetails(
   vapidKeys.privateKey
 )
 
-const push = async ((userId, data) => {
-  const subs = await (Subscription.findAll({where: {userId}}))
+const push = _async ((userId, data) => {
+  const subs = _await (Subscription.findAll({where: {userId}}))
 
   for (const sub of subs) {
     const parsed = JSON.parse(sub.subscription)

@@ -5,7 +5,7 @@ require('dotenv').config({path: path.resolve(__dirname, '../.env')})
 
 const express = require('express')
 const { Action } = require('../db/models')
-const { async, await } = require('asyncawait')
+const { async: _async, await: _await } = require('asyncawait')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const jwt = require('express-jwt')
@@ -85,43 +85,43 @@ const getTarget = ({triggerName, owner}) => {
 
 let lock = false
 
-const handleTicker = async ((_, {last: currPrice}) => {
+const handleTicker = _async ((_, {last: currPrice}) => {
   if (lock) return
   // console.log('Ticker: ' + currPrice)
   lock = true
   try {
     // Get the actions we ought to do and tag them with their index in the array
-    const actionsToDo = await (Action.findAll())
+    const actionsToDo = _await (Action.findAll())
       .filter(isDue(currPrice))
 
     // Execute and remove each one of them
     for (const action of actionsToDo) {
       switch (action.type) {
       case 'enable': {
-        const target = await (getTarget(action))
+        const target = _await (getTarget(action))
         let targetName = 'NOT FOUND'
         if(target) {
           target.enabled = true
           targetName = target.name
-          await (target.save())
+          _await (target.save())
         }
         console.log(`Action ${action.name} triggered at ${currPrice}, enabling action ${targetName}`)
         push(action.owner, `Accion tipo habilitar: ${action.name}`)
         break
       }
       case 'disable': {
-        const target = await (getTarget(action))
+        const target = _await (getTarget(action))
         let targetName = 'NOT FOUND'
         if(target) {
           targetName = target.name
           target.enabled = false
-          await (target.save())
+          _await (target.save())
         }
         console.log(`Action ${action.name} triggered at ${currPrice}, disabling action ${targetName}`)
         break
       }
       case 'sell': {
-        const balances = await (poloniex.balances(action.owner))
+        const balances = _await (poloniex.balances(action.owner))
         const currBTC = Number(balances.BTC)
         let amount = null
         const actionAmountBTC = action.amount / action.value
@@ -132,7 +132,7 @@ const handleTicker = async ((_, {last: currPrice}) => {
           amount = Math.min(currBTC, actionAmountBTC)
 
         try {
-          await (poloniex.sell(action.owner, 'USDT', 'BTC', action.value, amount))
+          _await (poloniex.sell(action.owner, 'USDT', 'BTC', action.value, amount))
           console.log(`Selling ${amount} BTC at ${action.value}`)
           push(action.owner, `Alerta: Vender ${amount}BTC a ${action.value}USD`)
         } catch (err) {
@@ -142,7 +142,7 @@ const handleTicker = async ((_, {last: currPrice}) => {
         break
       }
       case 'buy': {
-        const balances = await (poloniex.balances(action.owner))
+        const balances = _await (poloniex.balances(action.owner))
         const currUSD = Number(balances.USDT)
         let amount = null
         if (action.amountType === 'percentage')
@@ -153,7 +153,7 @@ const handleTicker = async ((_, {last: currPrice}) => {
 
         const amountBTC = amount / action.value
         try {
-          await (poloniex.buy(action.owner, 'USDT', 'BTC', action.value, amountBTC))
+          _await (poloniex.buy(action.owner, 'USDT', 'BTC', action.value, amountBTC))
           console.log(`Buying ${amount} USD at ${action.value}`)
           push(action.owner, `Comprando ${amount}USD a ${action.value}USD`)
         } catch (err) {
@@ -165,7 +165,7 @@ const handleTicker = async ((_, {last: currPrice}) => {
       }
       }
 
-      await (action.destroy())
+      _await (action.destroy())
     }
   } finally {
     lock = false

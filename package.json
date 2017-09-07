@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "asyncawait": "^1.0.6",
+    "babel-cli": "^6.26.0",
     "body-parser": "^1.17.2",
     "cors": "^2.8.4",
     "dotenv": "4.0.0",
@@ -68,21 +69,22 @@
   "scripts": {
     "start-js": "node scripts/start.js",
     "start-server": "cd server && nodemon index.js -w . && cd ..",
-    "start": "npm-run-all -p start-js start-server",
+    "watch-server": "babel --no-babelrc server -d server-dist --ignore **/__tests__/**/*.js --presets=env --watch",
+    "start": "npm-run-all -p start-js start-server watch-server",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "backup": "node scripts/backup.js"
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.{js,jsx}"
+      "./**/*.{js,jsx}"
     ],
     "setupFiles": [
       "<rootDir>/config/polyfills.js"
     ],
     "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.js?(x)",
-      "<rootDir>/src/**/?(*.)(spec|test).js?(x)"
+      "<rootDir>/**/__tests__/**/*.js?(x)",
+      "<rootDir>/**/?(*.)(spec|test).js?(x)"
     ],
     "testEnvironment": "node",
     "testURL": "http://localhost",

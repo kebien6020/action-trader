@@ -1,17 +1,17 @@
-const { async, await } = require('asyncawait')
+const { async: _async, await: _await } = require('asyncawait')
 const { UserConfig } = require('../db/models')
 const Poloniex = require('poloniex.js')
 
-const getApi = async ((userId) => {
+const getApi = _async ((userId) => {
   const {
     poloniexApiKey: key,
     poloniexSecret: secret,
-  } = await (UserConfig.findOne({where: {userId}}))
+  } = _await (UserConfig.findOne({where: {userId}}))
   return new Poloniex(key, secret)
 })
 
-exports.balances = async ((userId) => {
-  const poloniex = await (getApi(userId))
+exports.balances = _async ((userId) => {
+  const poloniex = _await (getApi(userId))
   return new Promise((resolve, reject) => {
     poloniex.returnBalances((err, data) => {
       if (err)
@@ -22,8 +22,8 @@ exports.balances = async ((userId) => {
   })
 })
 
-exports.buy = async ((userId, currencyA, currencyB, rate, amount) => {
-  const poloniex = await (getApi(userId))
+exports.buy = _async ((userId, currencyA, currencyB, rate, amount) => {
+  const poloniex = _await (getApi(userId))
   return new Promise((resolve, reject) => {
     poloniex.buy(currencyA, currencyB, rate, amount, (err, data) => {
       if (err)
@@ -33,8 +33,8 @@ exports.buy = async ((userId, currencyA, currencyB, rate, amount) => {
   })
 })
 
-exports.sell = async ((userId, currencyA, currencyB, rate, amount) => {
-  const poloniex = await (getApi(userId))
+exports.sell = _async ((userId, currencyA, currencyB, rate, amount) => {
+  const poloniex = _await (getApi(userId))
   return new Promise((resolve, reject) => {
     poloniex.sell(currencyA, currencyB, rate, amount, (err, data) => {
       if (err)

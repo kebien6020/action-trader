@@ -1,7 +1,7 @@
-const { async, await } = require('asyncawait')
+const { async: _async, await: _await } = require('asyncawait')
 const { Subscription } = require('../db/models')
 
-exports.register = async((req, res, next) => {
+exports.register = _async((req, res, next) => {
   try {
     const userId = req.user.sub
     const { subscription } = req.body
@@ -19,19 +19,19 @@ exports.register = async((req, res, next) => {
         'The subscription is not a valid JSON object ' +
         'with an endpoint property.'
       )
-    
-    await (Subscription.create({userId, subscription}))
+
+    _await (Subscription.create({userId, subscription}))
     res.json({success: true})
   } catch(err) {
     next(err)
   }
 })
 
-exports.unregister = async((req, res, next) => {
+exports.unregister = _async((req, res, next) => {
   try {
     const userId = req.user.sub
     const userEndpoint = req.body.endpoint
-    const subscriptions = await (Subscription.findAll({where: {userId}}))
+    const subscriptions = _await (Subscription.findAll({where: {userId}}))
 
     const rowToEndpoint = row =>
       JSON.parse(row.subscription).endpoint
@@ -39,7 +39,7 @@ exports.unregister = async((req, res, next) => {
       rowToEndpoint(sub) === userEndpoint
     )
     const destroyPromises = toDestroy.map(sub => sub.destroy())
-    await (Promise.all(destroyPromises))
+    _await (Promise.all(destroyPromises))
 
     res.json({success: true, alteredRows: toDestroy.length})
   } catch(err) {
@@ -47,11 +47,11 @@ exports.unregister = async((req, res, next) => {
   }
 })
 
-exports.isSubscribed = async((req, res, next) => {
+exports.isSubscribed = _async((req, res, next) => {
   try {
     const userId = req.user.sub
     const userEndpoint = req.query.endpoint
-    const rows = await (Subscription.findAll({where: {userId}}))
+    const rows = _await (Subscription.findAll({where: {userId}}))
 
     // Here we assume the subscriptions in the database are valid JSON
     const rowToEndpoint = row =>
