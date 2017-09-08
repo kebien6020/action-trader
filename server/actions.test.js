@@ -5,8 +5,8 @@ import {
   update,
   create,
   del,
-} from '../../actions'
-import { Action, Sequelize } from '../../../db/models'
+} from './actions'
+import { Action, Sequelize } from '../db/models'
 
 
 const testUser = {
@@ -20,6 +20,15 @@ const testAction1 = {
   check: 'gt',
   value: 275,
   enabled: true
+}
+
+const testAction2 = {
+  name: '2',
+  type: 'sell',
+  value: 274,
+  enabled: false,
+  amount: '0.50',
+  amountType: 'percentage',
 }
 
 const baseReq = {
@@ -123,5 +132,28 @@ describe('Actions API', () => {
 
     await create(req, res, next)
     expect(next).toHaveBeenCalled()
+  })
+
+  it('deletes actions', async () => {
+    // Add some actions to delete them
+    const addOwner = action =>
+      Object.assign({}, action, {owner: testUser.sub})
+
+    const actions = await Action.bulkCreate([
+      addOwner(testAction1),
+      addOwner(testAction2),
+    ])
+
+    const [{id: id1}, {id: id2}] = actions
+
+    // Test starts here
+    const req1 = mockReq({params: {id: id1}})
+    const res = mockRes()
+    const next = jest.fn()
+
+    await del(req1, res, next)
+
+    expect(next).not.toHaveBeenCalled()
+    expect(res.json).toHaveBeenCalledWith({success: true})
   })
 })
