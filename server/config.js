@@ -1,4 +1,4 @@
-const { UserConfig } = require('../db/models')
+const { UserConfig } = require('./db/models')
 const { async: _async, await: _await } = require('asyncawait')
 
 exports.getPoloniex = _async ((req, res, next) => {

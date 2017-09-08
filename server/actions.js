@@ -1,4 +1,4 @@
-import { Action } from '../db/models'
+import { Action } from './db/models'
 
 const fields = [
   'name',

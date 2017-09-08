@@ -1,5 +1,5 @@
 const { async: _async, await: _await } = require('asyncawait')
-const { UserConfig } = require('../db/models')
+const { UserConfig } = require('./db/models')
 const Poloniex = require('poloniex.js')
 
 const getApi = _async ((userId) => {

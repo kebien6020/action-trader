@@ -4,7 +4,7 @@ require('dotenv').config({path: path.resolve(__dirname, '../.env.local')})
 require('dotenv').config({path: path.resolve(__dirname, '../.env')})
 
 const express = require('express')
-const { Action } = require('../db/models')
+const { Action } = require('./db/models')
 const { async: _async, await: _await } = require('asyncawait')
 const bodyParser = require('body-parser')
 const cors = require('cors')

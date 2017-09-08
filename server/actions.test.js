@@ -6,8 +6,11 @@ import {
   create,
   del,
 } from './actions'
-import { Action, Sequelize } from '../db/models'
+import { Action, Sequelize } from './db/models'
 
+//
+// Utils and fixtures
+//
 
 const testUser = {
   sub: 'test-user',
@@ -48,12 +51,16 @@ function mockRes(jsonFn = jest.fn()) {
 async function clearActions() {
   return Action.destroy({
     where:{
-      owner: testUser.sub
+      // owner: testUser.sub
     }
   })
 }
 
 const entries = obj => Object.keys(obj).map(key => [key, obj[key]])
+
+//
+// Main test code
+//
 
 describe('Actions API', () => {
   beforeEach(clearActions)
@@ -135,10 +142,10 @@ describe('Actions API', () => {
   })
 
   it('deletes actions', async () => {
-    // Add some actions to delete them
     const addOwner = action =>
       Object.assign({}, action, {owner: testUser.sub})
 
+    // Add some actions to delete them
     const actions = await Action.bulkCreate([
       addOwner(testAction1),
       addOwner(testAction2),
@@ -146,7 +153,9 @@ describe('Actions API', () => {
 
     const [{id: id1}, {id: id2}] = actions
 
-    // Test starts here
+    expect(await Action.count()).toBe(2)
+
+    // Delete first action
     const req1 = mockReq({params: {id: id1}})
     const res = mockRes()
     const next = jest.fn()
@@ -155,5 +164,21 @@ describe('Actions API', () => {
 
     expect(next).not.toHaveBeenCalled()
     expect(res.json).toHaveBeenCalledWith({success: true})
+
+    expect(await Action.count()).toBe(1)
+    const actionLeft = await Action.findOne()
+    // We deleted action with id1 so the one left in the db is
+    // the one with id2
+    expect(actionLeft.id).toBe(id2)
+
+    // Delete second action
+    const req2 = mockReq({params: {id: id2}})
+
+    await del(req2, res, next)
+
+    expect(next).not.toHaveBeenCalled()
+    expect(res.json).toHaveBeenCalledWith({success: true})
+
+    expect(await Action.count()).toBe(0)
   })
 })

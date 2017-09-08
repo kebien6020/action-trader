@@ -1,5 +1,5 @@
 const { async: _async, await: _await } = require('asyncawait')
-const { Subscription } = require('../db/models')
+const { Subscription } = require('./db/models')
 
 exports.register = _async((req, res, next) => {
   try {
