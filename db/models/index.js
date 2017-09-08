@@ -26,19 +26,19 @@ fs
   .forEach(function(file) {
       // Models have to be in a specific way for them to be
       // able to be imported by Sequelize.prototype.import
-      const model = sequelize.import(path.join(__dirname, file))
+    const model = sequelize.import(path.join(__dirname, file))
       // Log all added models
-      debug(`adding ${model.name} to models`)
+    debug(`adding ${model.name} to models`)
       // Actually add them to the db object
-      db[model.name] = model
+    db[model.name] = model
   })
 
 // Setup model associations
 Object.keys(db).forEach(modelName => {
-    if (db[modelName].associate) {
-        debug(`setting up ${modelName} associations`)
-        db[modelName].associate(db)
-    }
+  if (db[modelName].associate) {
+    debug(`setting up ${modelName} associations`)
+    db[modelName].associate(db)
+  }
 })
 
 // Add sequelize instance and class to the exports

@@ -11,7 +11,7 @@ actions.get('/', actionHandlers.list)
 actions.get('/:id', actionHandlers.detail)
 actions.put('/:id', actionHandlers.update)
 actions.post('/', actionHandlers.create)
-actions.delete('/:id', actionHandlers.delete)
+actions.delete('/:id', actionHandlers.del)
 // Error handler
 actions.use(jsonErrorHandler)
 
