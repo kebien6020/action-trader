@@ -16,7 +16,7 @@ const push = require('./push')
 const poloniex = require('./poloniex')
 
 const PORT = 9000
-const BUILD_FOLDER = path.resolve('../build')
+const BUILD_FOLDER = path.resolve(__dirname, '../build')
 
 const authCheck = jwt({
   secret: jwks.expressJwtSecret({
