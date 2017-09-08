@@ -181,4 +181,24 @@ describe('Actions API', () => {
 
     expect(await Action.count()).toBe(0)
   })
+
+  it('fails to create a sell action without amount', async () => {
+    const sellAction = {
+      name: '1',
+      type: 'sell',
+      value: 274,
+      enabled: false,
+    }
+
+    const req = mockReq({body: sellAction})
+    const res = mockRes()
+    const next = jest.fn(error => {
+      expect(error).toBeInstanceOf(Sequelize.ValidationError)
+      expect(error.message).toBe('Validation error: sell and buy actions require an amount')
+    })
+
+    await create(req, res, next)
+
+    expect(next).toHaveBeenCalled()
+  })
 })
