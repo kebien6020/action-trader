@@ -13,9 +13,13 @@ export function fetchJson(url, auth, options) {
   return fetch(apiUrl + url, allOpts).then(res => res.json()).then(data => {
     if (data.success === false && data.error.name === 'UnauthorizedError') {
       const success = auth.renew()
-      if (success) {
-        // retry (let's hope this doesn't cause an infinite loop)
-        return fetchJson(url, auth, options)
+      if (success && !options.retry) {
+        // retry
+        const newOpts = Object.assign({}, options, {retry: true})
+        return fetchJson(url, auth, newOpts)
+      } else {
+        // silent auth failed, let's do a flashy auth
+        auth.login()
       }
 
     }
