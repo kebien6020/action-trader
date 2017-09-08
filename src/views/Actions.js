@@ -119,14 +119,15 @@ class Actions extends Component {
   }
 
   componentWillMount = async () => {
-    navigator.serviceWorker.addEventListener('message', this.handleSWMessage)
-
+    if (navigator.serviceWorker)
+      navigator.serviceWorker.addEventListener('message', this.handleSWMessage)
 
     return this.getActions()
   }
 
   componentWillUnmount = () => {
-    navigator.serviceWorker.removeEventListener('message', this.handleSWMessage)
+    if (navigator.serviceWorker)
+      navigator.serviceWorker.removeEventListener('message', this.handleSWMessage)
   }
 
   closeDialogs = () => this.setState({showAddDialog: false})
