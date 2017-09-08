@@ -95,6 +95,7 @@ export default class Auth {
       this.getAccessToken()
       const authResult = await this.renewAuth()
       this.saveAuth(authResult)
+      return true
     } catch (err) {
       // No previous access token: login
       return this.login()

@@ -7,16 +7,26 @@ const isAuthenticated = () => auth.isAuthenticated()
 
 const AuthRoute = ({component, sw, ...outerProps}) => {
   const { isPrivate } = component
-
-  if (isAuthenticated() || !isPrivate) {
-    // Authenticated users have access to every route
+  const renderRoute = () => {
     const Component = component
     const render = (props) => <Component auth={auth} sw={sw} {...outerProps} {...props} />
     return <Route { ...outerProps } render={render} />
+  }
+
+  if (isAuthenticated() || !isPrivate) {
+    // Authenticated users have access to every route
+    return renderRoute()
   } else {
     // User is not Authenticated and route is not private
-    auth.renew()
-    return null
+
+    // Try silent auth
+    const success = auth.renew()
+    if (success)
+      return renderRoute()
+
+    // If silent auth fails it redirects to the login page,
+    // so this should never be shown
+    return 'Error autenticando'
   }
 }
 
