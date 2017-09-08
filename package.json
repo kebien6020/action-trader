@@ -69,7 +69,7 @@
   "scripts": {
     "start-js": "node scripts/start.js",
     "start-server": "cd server-dist && nodemon index.js -w . && cd ..",
-    "build-server": "babel --no-babelrc server -d server-dist --ignore **/__tests__/**/*.js --presets=env",
+    "build-server": "babel --no-babelrc server -d server-dist --ignore **/__tests__/**/*.js,.test.js --presets=env",
     "watch-server": "npm run build-server -- --watch",
     "start": "npm-run-all -p start-js start-server watch-server",
     "build": "node scripts/build.js && npm run build-server",
@@ -85,7 +85,7 @@
     ],
     "testMatch": [
       "<rootDir>/**/__tests__/**/*.js?(x)",
-      "<rootDir>/**/?(*.)\\.(spec|test).js?(x)"
+      "<rootDir>/**/?(*).(spec|test).js?(x)"
     ],
     "testEnvironment": "node",
     "testURL": "http://localhost",
