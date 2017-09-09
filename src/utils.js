@@ -1,10 +1,13 @@
 const apiUrl = process.env.REACT_APP_API_URL
 
-export function fetchJson(url, auth, options) {
+export function fetchJson(url, auth, options = {}) {
+  const fetch = options.fetch || window.fetch
   const baseHeaders = {
     'Authorization': 'bearer ' + auth.getAccessToken(),
     'Content-Type': 'application/json',
+    'Accept': 'application/json'
   }
+
 
   const opts = options || {}
 
@@ -13,13 +16,13 @@ export function fetchJson(url, auth, options) {
   return fetch(apiUrl + url, allOpts).then(res => res.json()).then(data => {
     if (data.success === false && data.error.name === 'UnauthorizedError') {
       const success = auth.renew()
-      if (success && !options.retry) {
+      if (success && !opts.retry) {
         // retry
         const newOpts = Object.assign({}, options, {retry: true})
         return fetchJson(url, auth, newOpts)
       } else {
         // silent auth failed, let's do a flashy auth
-        auth.login()
+        return auth.login()
       }
 
     }

@@ -22,7 +22,7 @@ export default class Auth {
 
   parseHash = () => {
     return new Promise((resolve, reject) => {
-      this.auth0.parseHash((err, authResult) => {
+      this.auth0.parseHash({hash: window.location.hash}, (err, authResult) => {
         if (err) {
           console.log(err)
           return reject(err)

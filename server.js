@@ -12,8 +12,8 @@ async function getToken() {
     },
     body: JSON.stringify({
       grant_type: 'client_credentials',
-      client_id: 'Lt1GBIZN0Kd1R4p7k2rZ89Zl57KVSByQ',
-      client_secret: 'LAemmxs-v_Haz1CuB4GgqXpCUszEzE5oeknAIV01dAvY3rxMoWQbG5HB_9Ymiqf4',
+      client_id: process.env.AUTH0_TEST_CLIENT_ID,
+      client_secret: process.env.AUTH0_TEST_SECRET,
       audience: 'https://action-trader.com'
     }),
   }).then(res => res.json())
