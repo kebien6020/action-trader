@@ -2,6 +2,6 @@ language: node_js
 node_js:
   - "lts/*"
 before_script:
-  - yarn add -g sequelize-cli
+  - npm install -g sequelize-cli
   - sequelize db:migrate
   - yarn build-server
