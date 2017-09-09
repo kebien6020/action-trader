@@ -3,5 +3,4 @@ node_js:
   - "lts/*"
 before_script:
   - npm install -g sequelize-cli
-  - sequelize db:migrate
-  - yarn build-server
+  - sequelize db:migrate --config server/db/config.json --migrations-path server/db/migrations --models-path server/db/models --env test
