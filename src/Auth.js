@@ -3,6 +3,7 @@ import auth0 from 'auth0-js'
 const domain = process.env.REACT_APP_AUTH0_DOMAIN
 const clientID = process.env.REACT_APP_AUTH0_CLIENT_ID
 const redirectUri = process.env.REACT_APP_AUTH0_CALLBACK
+const silentRedirectUri = process.env.REACT_APP_BASE_URL + '/silentAuth'
 const audience = process.env.REACT_APP_AUTH0_AUDIENCE
 const scope = process.env.REACT_APP_AUTH0_SCOPE
 
@@ -33,9 +34,12 @@ export default class Auth {
   }
 
   renewAuth = () => {
-    return new Promise((resolve, reject) =>
+    return new Promise((resolve, reject) => {
       this.auth0.renewAuth(
-        {usePostMessage: false},
+        {
+          redirectUri: silentRedirectUri,
+          usePostMessage: true,
+        },
         (err, authResult) => {
           if (err) {
             console.log(err)
@@ -44,7 +48,7 @@ export default class Auth {
           return resolve(authResult)
         }
       )
-    )
+    })
   }
 
   handleAuthentication = async() => {

@@ -10,6 +10,7 @@ import Actions from './views/Actions'
 import Config from './views/Config'
 import NotFound from './views/NotFound'
 import AuthCallback from './views/AuthCallback'
+import SilentAuth from './views/SilentAuth'
 import NotificationsConfig from './views/NotificationsConfig'
 import PoloniexConfig from './views/PoloniexConfig'
 // Other
@@ -30,6 +31,7 @@ class App extends Component {
             <Route exact path='/actions' component={Actions} />
             <Route exact path='/config' component={Config} />
             <Route exact path='/authCallback' component={AuthCallback} />
+            <Route exact path='/silentAuth' component={SilentAuth} />
             <Route exact path='/config/notifications'
               sw={this.props.sw}
               component={NotificationsConfig}

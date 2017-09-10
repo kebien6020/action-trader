@@ -1,7 +1,8 @@
 const apiUrl = process.env.REACT_APP_API_URL
 
-export function fetchJson(url, auth, options = {}) {
+export async function fetchJson(url, auth, options = {}) {
   const fetch = options.fetch || window.fetch
+
   const baseHeaders = {
     'Authorization': 'bearer ' + auth.getAccessToken(),
     'Content-Type': 'application/json',
@@ -13,21 +14,27 @@ export function fetchJson(url, auth, options = {}) {
 
   const headers = Object.assign({}, baseHeaders, opts.headers)
   const allOpts = Object.assign({}, options, {headers})
-  return fetch(apiUrl + url, allOpts).then(res => res.json()).then(data => {
-    if (data.success === false && data.error.name === 'UnauthorizedError') {
-      const success = auth.renew()
-      if (success && !opts.retry) {
-        // retry
-        const newOpts = Object.assign({}, options, {retry: true})
-        return fetchJson(url, auth, newOpts)
-      } else {
-        // silent auth failed, let's do a flashy auth
-        return auth.login()
-      }
 
+  const response = await fetch(apiUrl + url, allOpts)
+  const data = await response.json()
+
+  // In case of token error try renewing it with silentAuth and retry
+  if (data.success === false && data.error.name === 'UnauthorizedError') {
+
+    const success = await auth.renew()
+
+    if (success && !opts.retry) {
+      // retry
+      const newOpts = Object.assign({}, options, {retry: true})
+      return fetchJson(url, auth, newOpts)
+    } else {
+      // silent auth failed, let's do a flashy auth
+      return auth.login()
     }
-    return data
-  })
+
+  }
+
+  return data
 }
 
 export function urlBase64ToUint8Array(base64String) {
