@@ -7,14 +7,11 @@ import {
   del,
 } from './actions'
 import { Action, Sequelize } from './db/models'
+import { testUserId, mockReq, mockRes } from './testUtils'
 
 //
 // Utils and fixtures
 //
-
-const testUser = {
-  sub: 'test-user',
-}
 
 const testAction1 = {
   name: '1',
@@ -32,20 +29,6 @@ const testAction2 = {
   enabled: false,
   amount: '0.50',
   amountType: 'percentage',
-}
-
-const baseReq = {
-  user: testUser
-}
-
-function mockReq(custom = {}) {
-  return Object.assign({}, baseReq, custom)
-}
-
-function mockRes(jsonFn = jest.fn()) {
-  return {
-    json: jsonFn
-  }
 }
 
 async function clearActions() {
@@ -121,7 +104,7 @@ describe('Actions API', () => {
     expect(res.json).toHaveBeenCalledWith(expectedRes)
 
     const dbAction =
-      await Action.findOne({where: {owner: testUser.sub}})
+      await Action.findOne({where: {owner: testUserId}})
 
     expect(dbAction).toBeDefined()
     expect(dbAction).toMatchObject(expectedRes.action)
@@ -143,7 +126,7 @@ describe('Actions API', () => {
 
   it('deletes actions', async () => {
     const addOwner = action =>
-      Object.assign({}, action, {owner: testUser.sub})
+      Object.assign({}, action, {owner: testUserId})
 
     // Add some actions to delete them
     const actions = await Action.bulkCreate([
