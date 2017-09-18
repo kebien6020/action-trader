@@ -73,6 +73,8 @@ const isDue = currPrice => action => {
       return Number(currPrice) >= action.value
     case 'lt':
       return Number(currPrice) <= action.value
+    default:
+      return false
     }
   return true
 }
@@ -163,6 +165,8 @@ const handleTicker = _async ((_, {last: currPrice}) => {
         break
 
       }
+      default:
+        console.log('Unsupported action type: ' + action.type)
       }
 
       _await (action.destroy())
