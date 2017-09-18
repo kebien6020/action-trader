@@ -1,11 +1,10 @@
-const { UserConfig } = require('./db/models')
-const { async: _async, await: _await } = require('asyncawait')
+import { UserConfig } from './db/models'
 
-exports.getPoloniex = _async ((req, res, next) => {
+export async function getPoloniex(req, res, next) {
   try {
     const userId = req.user.sub
     const userConfig =
-      _await (UserConfig.findOne({where: {userId}}))
+      await UserConfig.findOne({where: {userId}})
 
     if (userConfig === null)
       return res.json({
@@ -20,20 +19,20 @@ exports.getPoloniex = _async ((req, res, next) => {
   } catch (err) {
     next(err)
   }
-})
+}
 
-exports.updatePoloniex = _async ((req, res, next) => {
+export async function updatePoloniex (req, res, next) {
   try {
     const userId = req.user.sub
     const { poloniexApiKey, poloniexSecret } = req.body
-    const userConfig = _await (UserConfig.findOne({where: {userId}}))
+    const userConfig = await UserConfig.findOne({where: {userId}})
     if (userConfig === null) {
       const newConfig =
-        _await (UserConfig.create({
+        await UserConfig.create({
           userId,
           poloniexApiKey,
           poloniexSecret,
-        }))
+        })
 
       return res.json({
         success: true,
@@ -44,7 +43,7 @@ exports.updatePoloniex = _async ((req, res, next) => {
       // Already existed, just update
       userConfig.poloniexApiKey = poloniexApiKey
       userConfig.poloniexSecret = poloniexSecret
-      const newConfig = _await (userConfig.save())
+      const newConfig = await userConfig.save()
       return res.json({
         success: true,
         poloniexApiKey: newConfig.poloniexApiKey,
@@ -54,4 +53,4 @@ exports.updatePoloniex = _async ((req, res, next) => {
   } catch (err) {
     next(err)
   }
-})
+}
