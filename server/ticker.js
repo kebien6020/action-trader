@@ -15,7 +15,7 @@ class Ticker extends EventEmitter {
   }
 
   start() {
-    this.tick()
+    this.timer = setInterval(this.tick, this.timeout)
   }
 
   tick() {
@@ -32,15 +32,12 @@ class Ticker extends EventEmitter {
             this.emit('ticker', currencyPair, tickerData)
 
       }
-
-      if (this.timer) clearTimeout(this.timer)
-      this.timer = setTimeout(this.tick, this.timeout)
     })
   }
 
   stop() {
     if (this.timer)
-      clearTimeout(this.timer)
+      clearInterval(this.timer)
 
     this.timer = null
   }
