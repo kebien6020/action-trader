@@ -28,9 +28,12 @@ describe('Config API', () => {
   })
 
   it('updates configs successfully', async () => {
+    const poloniexApiKey = 'fakeApiKey'
+    const poloniexSecret = 'fakeSecret'
+
     const req = mockReq({body: {
-      poloniexApiKey: 'fakeApiKey',
-      poloniexSecret: 'fakeSecret',
+      poloniexApiKey,
+      poloniexSecret,
     }})
     const res = mockRes()
     const next = jest.fn()
@@ -49,8 +52,32 @@ describe('Config API', () => {
     expect(config).not.toBe(null)
     expect(config).toMatchObject(expect.objectContaining({
       userId: testUserId,
-      poloniexApiKey: 'fakeApiKey',
-      poloniexSecret: 'fakeSecret',
+      poloniexApiKey,
+      poloniexSecret,
+    }))
+  })
+
+  it('retrieves configs successfully', async () => {
+    const userId = testUserId
+    const poloniexApiKey = 'fakeApiKey'
+    const poloniexSecret = 'fakeSecret'
+
+    await UserConfig.create({
+      userId,
+      poloniexApiKey,
+      poloniexSecret,
+    })
+
+    const req = mockReq()
+    const res = mockRes()
+    const next = jest.fn()
+
+    await getPoloniex(req, res, next)
+
+    expect(next).not.toHaveBeenCalled()
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+      poloniexApiKey,
+      poloniexSecret,
     }))
   })
 })
