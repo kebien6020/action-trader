@@ -1,6 +1,5 @@
-const { async: _async, await: _await } = require('asyncawait')
-const { Subscription } = require('./db/models')
-const webpush = require('web-push')
+import { Subscription } from './db/models'
+import webpush from 'web-push'
 
 const vapidKeys = {
   publicKey: process.env.REACT_APP_SUBSCRIBE_PUBLIC_KEY,
@@ -13,13 +12,11 @@ webpush.setVapidDetails(
   vapidKeys.privateKey
 )
 
-const push = _async ((userId, data) => {
-  const subs = _await (Subscription.findAll({where: {userId}}))
+export default async function push(userId, data) {
+  const subs = await Subscription.findAll({where: {userId}})
 
   for (const sub of subs) {
     const parsed = JSON.parse(sub.subscription)
     webpush.sendNotification(parsed, data)
   }
-})
-
-module.exports = push
+}
