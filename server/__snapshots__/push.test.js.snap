@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`push helper calls sendNotification with user details from the database 1`] = `
+Array [
+  Array [
+    Object {
+      "endpoint": "https://some.push.api/different-random-string",
+      "expirationTime": null,
+      "keys": Object {
+        "auth": "base-64-string==",
+        "p256dh": "long-random-string-long-random-string-long-random-string-long-random-string",
+      },
+    },
+    undefined,
+  ],
+  Array [
+    Object {
+      "endpoint": "https://some.push.api/random-string",
+      "expirationTime": null,
+      "keys": Object {
+        "auth": "base-64-string==",
+        "p256dh": "long-random-string-long-random-string-long-random-string-long-random-string",
+      },
+    },
+    undefined,
+  ],
+]
+`;
+
+exports[`push helper sets vapid details once on require 1`] = `
+Array [
+  "mailto:kevin.pena.prog@gmail.com",
+  "<fake vapid public key>",
+  "<fake vapid private key>",
+]
+`;
