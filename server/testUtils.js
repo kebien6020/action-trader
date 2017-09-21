@@ -5,7 +5,8 @@ const testUser = {
 }
 
 const baseReq = {
-  user: testUser
+  user: testUser,
+  url: '/test-url',
 }
 
 export function mockReq(custom = {}) {
