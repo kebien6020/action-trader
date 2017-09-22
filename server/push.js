@@ -6,13 +6,20 @@ const vapidKeys = {
   privateKey: process.env.SUBSCRIBE_PRIVATE_KEY
 }
 
-webpush.setVapidDetails(
-  'mailto:kevin.pena.prog@gmail.com',
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-)
+let detailsWereSet = false
+
+export function init() {
+  detailsWereSet = true
+  webpush.setVapidDetails(
+    'mailto:kevin.pena.prog@gmail.com',
+    vapidKeys.publicKey,
+    vapidKeys.privateKey
+  )
+}
 
 export default async function push(userId, data) {
+  if (!detailsWereSet) init()
+
   const subs = await Subscription.findAll({where: {userId}})
 
   for (const sub of subs) {

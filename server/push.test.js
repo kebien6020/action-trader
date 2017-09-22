@@ -35,8 +35,8 @@ describe('push helper', () => {
     // Clear subscriptions
     return Subscription.destroy({truncate: true})
   })
-  it('sets vapid details once on require', () => {
-
+  it('sets vapid details once on the first push', async () => {
+    await push(testUserId)
     expect(mockWebPush.setVapidDetails.mock.calls[0]).toMatchSnapshot()
   })
 

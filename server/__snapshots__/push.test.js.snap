@@ -27,7 +27,7 @@ Array [
 ]
 `;
 
-exports[`push helper sets vapid details once on require 1`] = `
+exports[`push helper sets vapid details once on the first push 1`] = `
 Array [
   "mailto:kevin.pena.prog@gmail.com",
   "<fake vapid public key>",
