@@ -15,6 +15,7 @@ const routes = require('./routes')
 const Ticker = require('./ticker')
 const push = require('./push')
 const poloniex = require('./poloniex')
+const jsonErrorHandler = require('./jsonErrors').default
 
 const PORT = 9000
 const BUILD_FOLDER = path.resolve(__dirname, '../build')
@@ -45,11 +46,9 @@ app.use('/api/subscriptions', authCheck, routes.subscriptions)
 app.use('/api/testPush', authCheck, routes.testPush)
 app.use('/api/config', authCheck, routes.config)
 
-// Error handler for authCheck middleware
-app.use((error, req, res, next) => {
-  console.log(error)
-  res.json({ success: false, error })
-})
+// Error handler for any error thrown
+// in any route or middleware
+app.use(jsonErrorHandler)
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(BUILD_FOLDER, 'index.html'))
