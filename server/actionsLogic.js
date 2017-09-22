@@ -1,8 +1,8 @@
 const { Action } = require('./db/models')
 const { async: _async, await: _await } = require('asyncawait')
-const Ticker = require('./ticker')
-const push = require('./push').default
-const poloniex = require('./poloniex')
+const Ticker = require('./utils/ticker')
+const push = require('./utils/push').default
+const poloniex = require('./utils/poloniex')
 
 //
 // Poloniex ticker logic

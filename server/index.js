@@ -1,7 +1,7 @@
 // Polyfill new ES features
 import 'babel-polyfill'
 // Setup enviroment variables
-import './env'
+import './utils/env'
 
 // Start to watch the ticker and perform actions
 import './actionsLogic'

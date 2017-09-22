@@ -1,4 +1,4 @@
-import { UserConfig } from './db/models'
+import { UserConfig } from '../db/models'
 
 export async function getPoloniex(req, res, next) {
   try {

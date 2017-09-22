@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import * as actionHandlers from './actions'
-import * as configHandlers from './config'
-import * as subscriptionHandlers from './subscriptions'
-import testPushHandler from './testPush'
+import * as actionHandlers from './routes/actions'
+import * as configHandlers from './routes/config'
+import * as subscriptionHandlers from './routes/subscriptions'
+import testPushHandler from './routes/testPush'
 
 export const actions = Router()
 actions.get('/', actionHandlers.list)

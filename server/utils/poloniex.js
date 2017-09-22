@@ -1,4 +1,4 @@
-import { UserConfig } from './db/models'
+import { UserConfig } from '../db/models'
 import Poloniex from 'poloniex.js'
 
 async function _getApi(userId) {

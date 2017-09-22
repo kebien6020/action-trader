@@ -1,4 +1,4 @@
-import push from './push'
+import push from '../utils/push'
 
 export default async function testPush(req, res, next) {
   try {

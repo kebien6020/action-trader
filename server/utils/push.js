@@ -1,4 +1,4 @@
-import { Subscription } from './db/models'
+import { Subscription } from '../db/models'
 import webpush from 'web-push'
 
 const vapidKeys = {

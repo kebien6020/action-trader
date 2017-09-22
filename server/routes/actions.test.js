@@ -6,8 +6,8 @@ import {
   create,
   del,
 } from './actions'
-import { Action, Sequelize } from './db/models'
-import { testUserId, mockReq, mockRes } from './testUtils'
+import { Action, Sequelize } from '../db/models'
+import { testUserId, mockReq, mockRes } from '../utils/testUtils'
 
 //
 // Utils and fixtures

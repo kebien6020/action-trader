@@ -5,7 +5,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import * as routes from './routes'
-import jsonErrorHandler from './jsonErrors'
+import jsonErrorHandler from './utils/jsonErrors'
 
 
 // Set up the jwt middleware

@@ -1,4 +1,4 @@
-import { Subscription } from './db/models'
+import { Subscription } from '../db/models'
 
 export async function register(req, res, next) {
   try {

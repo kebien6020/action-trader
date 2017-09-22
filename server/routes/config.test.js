@@ -2,8 +2,8 @@ import {
   getPoloniex,
   updatePoloniex,
 } from './config'
-import { UserConfig } from './db/models'
-import { mockReq, mockRes, testUserId } from './testUtils'
+import { UserConfig } from '../db/models'
+import { mockReq, mockRes, testUserId } from '../utils/testUtils'
 
 async function clearConfigs() {
   return UserConfig.destroy({truncate: true})
