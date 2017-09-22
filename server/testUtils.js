@@ -1,4 +1,5 @@
 export const testUserId = 'test-user'
+export const testUrl = '/test-url'
 
 const testUser = {
   sub: testUserId,
@@ -6,7 +7,7 @@ const testUser = {
 
 const baseReq = {
   user: testUser,
-  url: '/test-url',
+  url: testUrl,
 }
 
 export function mockReq(custom = {}) {
