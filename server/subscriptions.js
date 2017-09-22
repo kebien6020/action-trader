@@ -1,7 +1,6 @@
-const { async: _async, await: _await } = require('asyncawait')
-const { Subscription } = require('./db/models')
+import { Subscription } from './db/models'
 
-exports.register = _async((req, res, next) => {
+export async function register(req, res, next) {
   try {
     const userId = req.user.sub
     const { subscription } = req.body
@@ -20,18 +19,18 @@ exports.register = _async((req, res, next) => {
         'with an endpoint property.'
       )
 
-    _await (Subscription.create({userId, subscription}))
+    await Subscription.create({userId, subscription})
     res.json({success: true})
   } catch(err) {
     next(err)
   }
-})
+}
 
-exports.unregister = _async((req, res, next) => {
+export async function unregister(req, res, next) {
   try {
     const userId = req.user.sub
     const userEndpoint = req.body.endpoint
-    const subscriptions = _await (Subscription.findAll({where: {userId}}))
+    const subscriptions = await Subscription.findAll({where: {userId}})
 
     const rowToEndpoint = row =>
       JSON.parse(row.subscription).endpoint
@@ -39,19 +38,19 @@ exports.unregister = _async((req, res, next) => {
       rowToEndpoint(sub) === userEndpoint
     )
     const destroyPromises = toDestroy.map(sub => sub.destroy())
-    _await (Promise.all(destroyPromises))
+    await Promise.all(destroyPromises)
 
     res.json({success: true, alteredRows: toDestroy.length})
   } catch(err) {
     next(err)
   }
-})
+}
 
-exports.isSubscribed = _async((req, res, next) => {
+export async function isSubscribed(req, res, next) {
   try {
     const userId = req.user.sub
     const userEndpoint = req.query.endpoint
-    const rows = _await (Subscription.findAll({where: {userId}}))
+    const rows = await Subscription.findAll({where: {userId}})
 
     // Here we assume the subscriptions in the database are valid JSON
     const rowToEndpoint = row =>
@@ -63,4 +62,4 @@ exports.isSubscribed = _async((req, res, next) => {
   } catch(err) {
     next(err)
   }
-})
+}

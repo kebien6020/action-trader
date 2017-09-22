@@ -1,8 +1,8 @@
 import { Router } from 'express'
 import * as actionHandlers from './actions'
 import * as configHandlers from './config'
-const subscriptionHandlers = require('./subscriptions')
-const testPushHandler = require('./testPush')
+import * as subscriptionHandlers from './subscriptions'
+import testPushHandler from './testPush'
 
 export const actions = Router()
 actions.get('/', actionHandlers.list)
