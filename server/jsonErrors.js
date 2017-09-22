@@ -1,27 +1,41 @@
-const Sequelize = require('sequelize')
+import Sequelize from 'sequelize'
+import jwt from 'express-jwt'
 
-module.exports = function jsonErrorHandler(error, req, res, next) {
+export default function jsonErrorHandler(error, req, res, next) {
   try {
-    if (error instanceof Sequelize.ValidationError)
+    if (!error || !(error instanceof Error))
       error = {
-        message: JSON.stringify(error.errors),
-        name: error.name
+        message: 'Unknown error',
+        code: 'unknown_error',
       }
-    else if (error.message === 'not found')
+    else if (error instanceof Sequelize.ValidationError)
       error = {
-        message: 'Action not found',
-        name: 'NotFoundError',
-        code: 'not_found'
+        message: 'One or more database contraints did not pass',
+        code: 'validation_error',
+        errors: error.errors
       }
-    else
+    else if (error instanceof jwt.UnauthorizedError)
       error = {
-        message: error.message
+        message: error.message,
+        code: 'unauthorized_error',
+        error: error
+      }
+    else if (error.name === 'Error')
+      error = {
+        message: error.message,
+        code: 'unknown_error',
+      }
+    else if (error.message && error.name)
+      error = {
+        message: error.message,
+        code: error.name
       }
 
     console.log(req.url, error)
 
     res.json({ success: false, error })
   } catch (err) {
-    console.log(err)
+    console.error('Error while handling error', err)
+    console.error('The original error was', error)
   }
 }

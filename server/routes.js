@@ -1,7 +1,7 @@
 const Router = require('express').Router
 const actionHandlers = require('./actions')
 const subscriptionHandlers = require('./subscriptions')
-const jsonErrorHandler = require('./jsonErrors')
+const jsonErrorHandler = require('./jsonErrors').default
 const testPushHandler = require('./testPush')
 const configHandlers = require('./config')
 
