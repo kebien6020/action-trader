@@ -220,7 +220,8 @@ describe('jsonErrorHandler', () => {
         expect.objectContaining({
           message: expect.stringMatching(/.*/),
           code: expect.stringMatching(/.*/),
-        })
+        }),
+        error
       )
     }
   })
