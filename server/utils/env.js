@@ -1,5 +1,12 @@
 import path from 'path'
 import dotenv from 'dotenv'
 
-dotenv.config({path: path.resolve(__dirname, '../.env.local')})
-dotenv.config({path: path.resolve(__dirname, '../.env')})
+const dotenvFiles = [
+  '../../.env.local',
+  '../../.env'
+].map(filename => path.resolve(__dirname, filename))
+
+for (const file of dotenvFiles) {
+  console.log('Loading environment variables from ', file)
+  dotenv.config({path: file})
+}
