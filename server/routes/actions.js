@@ -84,3 +84,35 @@ export async function del(req, res, next) {
     next(err)
   }
 }
+
+export async function bulkCreate(req, res, next) {
+  try {
+    const owner = req.user.sub
+    const addOwner = action =>
+      Object.assign({}, action, {owner})
+    const actions = req.body.actions.map(addOwner)
+    const dbActions = await Action.bulkCreate(actions, {
+      fields: fields.concat('owner'),
+      validate: true,
+    })
+
+    const ids = dbActions.map(action => action.id)
+    res.json({success: true, ids})
+
+    return ids
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function deleteAll(req, res, next) {
+  try {
+    const owner = req.user.sub
+    const deleted = await Action.destroy({where: {owner}})
+
+    res.json({success: true, deleted})
+    return deleted
+  } catch (err) {
+    next(err)
+  }
+}

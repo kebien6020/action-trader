@@ -5,6 +5,8 @@ import * as subscriptionHandlers from './routes/subscriptions'
 import testPushHandler from './routes/testPush'
 
 export const actions = Router()
+actions.post('/bulkCreate', actionHandlers.bulkCreate)
+actions.delete('/deleteAll', actionHandlers.deleteAll)
 actions.get('/', actionHandlers.list)
 actions.get('/:id', actionHandlers.detail)
 actions.put('/:id', actionHandlers.update)

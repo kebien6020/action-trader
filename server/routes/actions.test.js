@@ -5,6 +5,8 @@ import {
   update,
   create,
   del,
+  bulkCreate,
+  deleteAll,
 } from './actions'
 import { Action, Sequelize } from '../db/models'
 import { testUserId, mockReq, mockRes } from '../utils/testUtils'
@@ -183,5 +185,51 @@ describe('Actions API', () => {
     await create(req, res, next)
 
     expect(next).toHaveBeenCalled()
+  })
+
+  it('creates multiple actions', async () => {
+    const actions = [testAction1, testAction2]
+
+    const req = mockReq({body: {actions}})
+    const res = mockRes()
+    const next = jest.fn()
+
+    const ids = await bulkCreate(req, res, next)
+
+    expect(next).not.toHaveBeenCalled()
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+      success: true,
+      ids: expect.any(Array)
+    }))
+
+    // Query the database to see the actions being in there
+
+    const dbActions = await Action.findAll({where: {id: {$in: ids}}})
+
+    expect(dbActions).toHaveLength(2)
+  })
+
+  // TODO: implement this test
+  it('fails creating multiple actions if even one fails validation')
+
+  it('deletes all actions from the user', async () => {
+    const rawActions = [testAction1, testAction2]
+    const actions = rawActions
+      .map(a => Object.assign({}, a, {owner: testUserId}))
+
+    await Action.bulkCreate(actions)
+
+    expect(await Action.count()).toBe(2)
+
+    const req = mockReq()
+    const res = mockRes()
+    const next = jest.fn()
+
+    await deleteAll(req, res, next)
+
+    expect(next).not.toHaveBeenCalled()
+    expect(res.json).toHaveBeenCalledWith({success: true, deleted: 2})
+
+    expect(await Action.count()).toBe(0)
   })
 })
