@@ -18,6 +18,7 @@ import Layout from '../components/Layout'
 import StopLimitGeneratorCard from '../components/StopLimitGeneratorCard'
 import UpstairsGeneratorCard from '../components/UpstairsGeneratorCard'
 import DownstairsGeneratorCard from '../components/DownstairsGeneratorCard'
+import UpstairsClosingGeneratorCard from '../components/UpstairsClosingGeneratorCard'
 
 import SwipeableViews from 'react-swipeable-views'
 import Portal from 'react-portal-minimal'
@@ -278,6 +279,11 @@ class Actions extends Component {
                 auth={this.props.auth}
               />
               <DownstairsGeneratorCard
+                onGenerate={this.handleGenerate}
+                actions={this.state.actions}
+                auth={this.props.auth}
+              />
+              <UpstairsClosingGeneratorCard
                 onGenerate={this.handleGenerate}
                 actions={this.state.actions}
                 auth={this.props.auth}
