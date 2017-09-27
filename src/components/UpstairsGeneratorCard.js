@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import GeneratorCard from  './GeneratorCard'
 import AmountField from './AmountField'
 import TextField from 'material-ui/TextField'
-import { generateStair, Direction, createAction } from './generatorUtils'
+import { generateStair, Direction, createActions } from './generatorUtils'
 
 class UpstairsGeneratorCard extends Component {
   state = {
@@ -51,14 +51,11 @@ class UpstairsGeneratorCard extends Component {
     // Generate the stair of actions
     const stair = generateStair(params)
 
+    // Show indeterminate progressBar
+    this.setState({progress: true})
+
     // Actually create actions on the server
-    for (let i = 0; i < stair.length; ++i) {
-      const action = stair[i]
-      // TODO: handle network errors
-      await createAction(action, this.props.auth)
-      const progress = Math.ceil(i / stair.length * 100)
-      this.setState({progress})
-    }
+    await createActions(stair, this.props.auth)
 
     // We are done. Reset progress indicator and call back to the parent
     this.setState({progress: null})

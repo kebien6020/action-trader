@@ -88,9 +88,8 @@ class Actions extends Component {
       if (!response.success)
         throw Error(response.error)
       const rawActions = response.actions
-      const getDate = action => (new Date(action.createdAt)).getTime()
-      // Sort by creation date from older to newer
-      const actions = rawActions.sort((a, b) =>getDate(a) - getDate(b))
+      // Sort by id
+      const actions = rawActions.sort((a, b) => a.id - b.id)
 
       const actionNames = {}
       for (const action of actions) {
@@ -252,16 +251,10 @@ class Actions extends Component {
   }
 
   deleteAllActions = async () => {
-    await this.getActions()
-    const actions = this.state.actions
+    await fetchJson('/actions/deleteAll', this.props.auth, {
+      method: 'delete',
+    })
 
-    const promises = []
-    for (const action of actions)
-      promises.push(fetchJson(`/actions/${action.id}`, this.props.auth, {
-        method: 'delete'
-      }))
-
-    await Promise.all(promises)
     return this.getActions()
   }
 

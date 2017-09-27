@@ -57,13 +57,18 @@ class GeneratorCard extends Component {
           <div>
             <CardText style={styles.content}>
               {this.props.children}
-              {this.props.progress !== null ?
+              {this.props.progress === true ?
                 <LinearProgress
-                  mode='determinate'
-                  value={this.props.progress}
+                  mode='indeterminate'
                 />
                 :
-                null
+                this.props.progress !== null ?
+                  <LinearProgress
+                    mode='determinate'
+                    value={this.props.progress}
+                  />
+                  :
+                  null
               }
             </CardText>
             <CardActions style={{textAlign: 'right'}}>
