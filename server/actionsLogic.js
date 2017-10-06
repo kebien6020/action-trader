@@ -1,6 +1,6 @@
 import * as actionHandlers from './actions'
 import { Action } from './db/models'
-import Ticker from './utils/ticker'
+import Ticker from './common/ticker'
 
 const CURRENCY_PAIR = 'USDT_BTC'
 

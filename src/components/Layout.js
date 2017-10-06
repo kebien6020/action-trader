@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import SideNav from './SideNav'
-import Ticker from '../ticker'
+import Ticker from '../common/ticker'
 
 class Layout extends Component {
   state = {
