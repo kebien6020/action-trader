@@ -4,7 +4,8 @@ import AmountField from './AmountField'
 import TextField from 'material-ui/TextField'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
-import { definePrefix, createAction } from './generatorUtils'
+import { definePrefix } from '../common/generatorUtils'
+import { createAction } from '../api'
 
 class StopLimitGeneratorCard extends Component {
   state = {

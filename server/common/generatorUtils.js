@@ -1,5 +1,3 @@
-import { fetchJson } from '../utils'
-
 export const Direction = {
   // Strings inside symbols are just for debugging
   UPSTAIRS: Symbol('UPSTAIRS'),
@@ -104,26 +102,6 @@ export function definePrefix(sell, existingActions) {
     ++prefixIndex
 
   return makePrefix(prefixIndex)
-}
-
-export function createAction(action, auth) {
-  return fetchJson('/actions', auth, {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(action),
-  })
-}
-
-export function createActions(actions, auth) {
-  return fetchJson('/actions/bulkCreate', auth, {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({actions}),
-  })
 }
 
 export function generateClosingStair(args) {

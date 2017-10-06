@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import GeneratorCard from  './GeneratorCard'
 import AmountField from './AmountField'
 import TextField from 'material-ui/TextField'
-import { generateStair, Direction, createActions } from './generatorUtils'
+import { generateStair, Direction } from '../common/generatorUtils'
+import { createActions } from '../api'
 
 class UpstairsGeneratorCard extends Component {
   state = {

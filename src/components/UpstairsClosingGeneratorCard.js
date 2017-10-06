@@ -4,7 +4,8 @@ import AmountField from './AmountField'
 import TextField from 'material-ui/TextField'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
-import { generateClosingStair, Direction, createActions } from './generatorUtils'
+import { generateClosingStair, Direction } from '../common/generatorUtils'
+import { createActions } from '../api'
 
 class UpstairsClosingGeneratorCard extends Component {
   state = {
