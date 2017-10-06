@@ -1,16 +1,12 @@
-const { Action } = require('./db/models')
-const { async: _async, await: _await } = require('asyncawait')
-const Ticker = require('./utils/ticker')
-const push = require('./utils/push').default
-const poloniex = require('./utils/poloniex')
-
-//
-// Poloniex ticker logic
-//
+import * as actionHandlers from './actions'
+import { Action } from './db/models'
+import Ticker from './utils/ticker'
 
 const CURRENCY_PAIR = 'USDT_BTC'
 
 const ticker = new Ticker([CURRENCY_PAIR], 1000)
+ticker.on('ticker', handleTicker)
+ticker.on('error', err => console.log(err))
 
 // Judge wether an action is due
 const isDue = currPrice => action => {
@@ -27,103 +23,31 @@ const isDue = currPrice => action => {
   return true
 }
 
-const getTarget = ({triggerName, owner}) => {
-  return (Action.findOne({
-    where: {name: triggerName, owner}
-  }))
-}
-
 let lock = false
 
-const handleTicker = _async ((_, {last: currPrice}) => {
+async function handleTicker(_, {last: currPrice}) {
   if (lock) return
-  // console.log('Ticker: ' + currPrice)
   lock = true
+
   try {
     // Get the actions we ought to do and tag them with their index in the array
-    const actionsToDo = _await (Action.findAll())
-      .filter(isDue(currPrice))
+    const allActions = await Action.findAll()
+    const actionsToDo = allActions.filter(isDue(currPrice))
 
     // Execute and remove each one of them
     for (const action of actionsToDo) {
-      switch (action.type) {
-      case 'enable': {
-        const target = _await (getTarget(action))
-        let targetName = 'NOT FOUND'
-        if(target) {
-          target.enabled = true
-          targetName = target.name
-          _await (target.save())
-        }
-        console.log(`Action ${action.name} triggered at ${currPrice}, enabling action ${targetName}`)
-        push(action.owner, `Accion tipo habilitar: ${action.name}`)
-        break
-      }
-      case 'disable': {
-        const target = _await (getTarget(action))
-        let targetName = 'NOT FOUND'
-        if(target) {
-          targetName = target.name
-          target.enabled = false
-          _await (target.save())
-        }
-        console.log(`Action ${action.name} triggered at ${currPrice}, disabling action ${targetName}`)
-        break
-      }
-      case 'sell': {
-        const balances = _await (poloniex.balances(action.owner))
-        const currBTC = Number(balances.BTC)
-        let amount = null
-        const actionAmountBTC = action.amount / action.value
-        if (action.amountType === 'percentage')
-          amount = currBTC * action.amount
-        else
-          // action.amountType === 'absolute'
-          amount = Math.min(currBTC, actionAmountBTC)
-
-        try {
-          _await (poloniex.sell(action.owner, 'USDT', 'BTC', action.value, amount))
-          console.log(`Selling ${amount} BTC at ${action.value}`)
-          push(action.owner, `Alerta: Vender ${amount}BTC a ${action.value}USD`)
-        } catch (err) {
-          console.log(err)
-          push(action.owner, `Error al colocar orden de venta ${err}`)
-        }
-        break
-      }
-      case 'buy': {
-        const balances = _await (poloniex.balances(action.owner))
-        const currUSD = Number(balances.USDT)
-        let amount = null
-        if (action.amountType === 'percentage')
-          amount = currUSD * action.amount
-        else
-          // action.amountType === 'absolute'
-          amount = Math.min(currUSD, action.amount)
-
-        const amountBTC = amount / action.value
-        try {
-          _await (poloniex.buy(action.owner, 'USDT', 'BTC', action.value, amountBTC))
-          console.log(`Buying ${amount} USD at ${action.value}`)
-          push(action.owner, `Comprando ${amount}USD a ${action.value}USD`)
-        } catch (err) {
-          console.log(err)
-          push(action.owner, `Error al colocar orden de compra ${err}`)
-        }
-        break
-
-      }
-      default:
+      const handler = actionHandlers[action.type]
+      if (!handler) {
         console.log('Unsupported action type: ' + action.type)
+        continue
       }
+      await handler(action, currPrice)
 
-      _await (action.destroy())
+      await action.destroy()
     }
   } finally {
     lock = false
   }
-})
+}
 
-ticker.on('ticker', handleTicker)
-ticker.on('error', err => console.log(err))
 ticker.start()
