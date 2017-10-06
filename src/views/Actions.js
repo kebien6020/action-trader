@@ -90,8 +90,6 @@ class Actions extends Component {
   handleSWMessage = event => {
     if (event.data === 'update')
       this.getActions()
-    const audio = new Audio('/notification.mp3')
-    audio.play()
   }
 
   componentWillMount = async () => {

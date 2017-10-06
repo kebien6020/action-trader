@@ -22,6 +22,20 @@ import './App.css'
 injectTapEventPlugin()
 
 class App extends Component {
+  componentWillMount() {
+    if (navigator.serviceWorker)
+      navigator.serviceWorker.addEventListener('message', this.handleSWMessage)
+  }
+
+  componentWillUnmount() {
+    if (navigator.serviceWorker)
+      navigator.serviceWorker.removeEventListener('message', this.handleSWMessage)
+  }
+
+  handleSWMessage = event => {
+    const audio = new Audio('/notification.mp3')
+    audio.play()
+  }
   render() {
     return (
       <BrowserRouter>
