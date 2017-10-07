@@ -8,7 +8,7 @@ export const Direction = {
 export function generateStair(args) {
   let {
     direction,
-    initialValue,
+    minValueToAction,
     step,
     stopDistance,
     stepQty,
@@ -20,7 +20,7 @@ export function generateStair(args) {
 
   const closingStairArgs = {
     direction,
-    minValueToAction: initialValue,
+    minValueToAction,
     step,
     initialStopDistance: stopDistance,
     finalStopDistance: stopDistance,

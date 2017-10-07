@@ -8,12 +8,9 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 
 import Layout from '../components/Layout'
 import NewActionDialog from '../components/NewActionDialog'
-import StopLimitGeneratorCard from '../components/StopLimitGeneratorCard'
-import UpstairsGeneratorCard from '../components/UpstairsGeneratorCard'
-import DownstairsGeneratorCard from '../components/DownstairsGeneratorCard'
-import UpstairsClosingGeneratorCard from '../components/UpstairsClosingGeneratorCard'
-import DownstairsClosingGeneratorCard from '../components/DownstairsClosingGeneratorCard'
+import GeneratorCard from '../components/GeneratorCard'
 import ActionList from '../components/ActionList'
+import * as generators from '../common/generators'
 
 import SwipeableViews from 'react-swipeable-views'
 import { fetchJson } from '../utils'
@@ -154,31 +151,14 @@ class Actions extends Component {
         <SwipeableViews onChangeIndex={this.handleChangeTab} index={this.state.tabIndex}>
           <div className="generators">
             <div style={styles.row}>
-              <UpstairsGeneratorCard
-                onGenerate={this.handleGenerate}
-                actions={this.state.actions} // To avoid name collisions
-                auth={this.props.auth}
-              />
-              <DownstairsGeneratorCard
-                onGenerate={this.handleGenerate}
-                actions={this.state.actions}
-                auth={this.props.auth}
-              />
-              <UpstairsClosingGeneratorCard
-                onGenerate={this.handleGenerate}
-                actions={this.state.actions}
-                auth={this.props.auth}
-              />
-              <DownstairsClosingGeneratorCard
-                onGenerate={this.handleGenerate}
-                actions={this.state.actions}
-                auth={this.props.auth}
-              />
-              <StopLimitGeneratorCard
-                onGenerate={this.handleGenerate}
-                actions={this.state.actions}
-                auth={this.props.auth}
-              />
+              {Object.values(generators).map((generator, key) =>
+                <GeneratorCard
+                  generator={generator}
+                  onGenerate={this.handleGenerate}
+                  actions={this.state.actions} // To avoid name collisions
+                  auth={this.props.auth}
+                />
+              )}
             </div>
           </div>
           <ActionList

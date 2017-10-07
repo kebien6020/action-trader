@@ -90,6 +90,7 @@ class NewActionDialog extends Component {
             <MenuItem value='disable' primaryText='Deshabilitar acción' />
             <MenuItem value='sell' primaryText='Vender' />
             <MenuItem value='buy' primaryText='Comprar' />
+            <MenuItem value='generate' primaryText='Generador' />
           </SelectField>
           {this.state.type === 'enable' || this.state.type === 'disable' ?
             <TextField
@@ -111,14 +112,16 @@ class NewActionDialog extends Component {
             <MenuItem value='gt' primaryText='Precio mayor que...' />
             <MenuItem value='lt' primaryText='Precio menor que...' />
           </SelectField>
-          <TextField
-            floatingLabelText='Precio'
-            value={this.state.value}
-            onChange={this.handleTextField}
-            name='value'
-            type='number'
-            fullWidth={true}
-          />
+          {(this.state.type !== 'generate' || this.state.check !== 'none') &&
+            <TextField
+              floatingLabelText='Precio'
+              value={this.state.value}
+              onChange={this.handleTextField}
+              name='value'
+              type='number'
+              fullWidth={true}
+            />
+          }
           {(this.state.type === 'buy' || this.state.type === 'sell') &&
             <AmountField
               amount={this.state.amount}
@@ -127,14 +130,13 @@ class NewActionDialog extends Component {
               onTypeChange={this.handleChange}
             />
           }
+          {this.state.type === 'generate' &&
+            'Campos de generador'
+          }
           <Toggle
             label='Habilitada'
             toggled={this.state.enabled}
             labelStyle={{width: 'auto'}}
-            // trackStyle={{backgroundColor: this.props.muiTheme.palette.disabledColor}}
-            // thumbStyle={{backgroundColor: this.props.muiTheme.palette.primary2Color}}
-            // trackSwitchedStyle={{backgroundColor: this.props.muiTheme.palette.accent1Color}}
-            // thumbSwitchedStyle={{backgroundColor: this.props.muiTheme.palette.primary1Color}}
             onToggle={(_, checked) => this.setState({enabled: checked})}
           />
       </Dialog>

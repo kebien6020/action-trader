@@ -8,7 +8,7 @@ const AmountField = (props) => (
     <TextField
       floatingLabelText={props.customTitle || 'Cantidad'}
       value={props.amount}
-      onChange={(event) => props.onAmountChange('amount', event.target.value)}
+      onChange={(event) => props.onAmountChange('amount', Number(event.target.value))}
       name='amount'
       type='number'
       style={{flex: '4'}}
