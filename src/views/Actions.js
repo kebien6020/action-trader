@@ -153,6 +153,7 @@ class Actions extends Component {
             <div style={styles.row}>
               {Object.values(generators).map((generator, key) =>
                 <GeneratorCard
+                  key={key}
                   generator={generator}
                   onGenerate={this.handleGenerate}
                   actions={this.state.actions} // To avoid name collisions
